@@ -14,9 +14,14 @@ const common = {
     tsconfig: './tsconfig.json',
 };
 
-build({
+/** @type {import('esbuild').BuildOptions}*/
+const plugin = {
     ...common,
-    entryPoints: ['src/index.ts'],
-    outfile: outDir + 'index.js',
-    minify: true,
-});
+    entryPoints: ['src/plugin/index.ts'],
+    outfile: outDir + 'plugin/index.js',
+    platform: 'node',
+    packages: 'external',
+}
+
+
+build(plugin);
