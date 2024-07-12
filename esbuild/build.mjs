@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import {build} from 'esbuild';
+import {sassPlugin} from 'esbuild-sass-plugin';
 
 import tsConfig from '../tsconfig.json' assert { type: "json" };
 
@@ -23,5 +24,15 @@ const plugin = {
     packages: 'external',
 }
 
+/** @type {import('esbuild').BuildOptions}*/
+const runtime = {
+    ...common,
+    entryPoints: ['src/runtime/index.ts'],
+    outfile: outDir + 'runtime/index.js',
+    minify: true,
+    platform: 'browser',
+    plugins: [sassPlugin()],
+};
 
 build(plugin);
+build(runtime);

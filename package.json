@@ -2,8 +2,20 @@
   "name": "@diplodoc/cut-extension",
   "version": "0.0.0",
   "description": "Cut extension for Diplodoc platform",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/plugin/index.js",
+  "types": "build/plugin/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/plugin/index.d.ts",
+      "default": "./build/plugin/index.js"
+    },
+    "./runtime": {
+      "types": "./build/runtime/index.d.ts",
+      "style": "./build/runtime/index.css",
+      "default": "./build/runtime/index.js"
+    },
+    "./runtime/styles.css": "./build/runtime/index.css"
+  },
   "homepage": "https://diplodoc.com/",
   "repository": {
     "type": "git",
@@ -36,6 +48,7 @@
     "@types/jest": "^29.5.12",
     "@types/markdown-it": "^13.0.8",
     "esbuild": "^0.22.0",
+    "esbuild-sass-plugin": "^3.3.1",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

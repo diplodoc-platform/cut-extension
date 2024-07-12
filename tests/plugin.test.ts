@@ -2,13 +2,13 @@ import transform from '@diplodoc/transform';
 
 import * as cutExtension from '../src/plugin';
 
-const transformYfm = (text: string) => {
+const transformYfm = (text: string, opts?: cutExtension.TransformOptions) => {
     const {
-        result: {html},
+        result,
     } = transform(text, {
-        plugins: [cutExtension.transform()],
+        plugins: [cutExtension.transform({bundle: false, ...opts})],
     });
-    return html;
+    return result;
 };
 
 describe('Cut extension - plugin', () => {
@@ -16,7 +16,7 @@ describe('Cut extension - plugin', () => {
         expect(
             transformYfm(
                 '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<div class="yfm-cut"><div class="yfm-cut-title">Cut title</div>' +
                 '<div class="yfm-cut-content"><p>Cut content</p>' +
@@ -34,7 +34,7 @@ describe('Cut extension - plugin', () => {
                     '```\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<div class="yfm-cut"><div class="yfm-cut-title">Cut title</div>' +
                 '<div class="yfm-cut-content"><pre><code>Code</code></pre>' +
@@ -56,7 +56,7 @@ describe('Cut extension - plugin', () => {
                     'Cut content 2\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<div class="yfm-cut"><div class="yfm-cut-title">Cut title 1</div>' +
                 '<div class="yfm-cut-content"><p>Cut content 1</p></div>' +
@@ -81,7 +81,7 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<div class="yfm-cut"><div class="yfm-cut-title">Outer title</div>' +
                 '<div class="yfm-cut-content"><p>Outer content</p>' +
@@ -99,7 +99,7 @@ describe('Cut extension - plugin', () => {
                     'Content we want to hide\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<div class="yfm-cut">' +
                 '<div class="yfm-cut-title"><strong>Strong cut title</strong></div>' +
@@ -118,7 +118,7 @@ describe('Cut extension - plugin', () => {
                     '  Some text\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<ul><li><div class="yfm-cut"><div class="yfm-cut-title">Cut 1</div>' +
                 '<div class="yfm-cut-content"><p>Some text</p><p>Some text</p></div></div></li></ul>',
@@ -145,7 +145,7 @@ describe('Cut extension - plugin', () => {
                     '  Some text\n' +
                     '\n' +
                     '{% endcut %}',
-            ).replace(/(\r\n|\n|\r)/gm, ''),
+            ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
             '<ul><li><div class="yfm-cut"><div class="yfm-cut-title">Cut 1</div>' +
                 '<div class="yfm-cut-content"><p>Some text</p></div></div></li>' +
@@ -154,5 +154,31 @@ describe('Cut extension - plugin', () => {
                 '<li><div class="yfm-cut"><div class="yfm-cut-title">Cut 3</div>' +
                 '<div class="yfm-cut-content"><p>Some text</p></div></div></li></ul>',
         );
+    });
+
+    it('should dont add assets to meta if no yfm-cut is found', () => {
+        const markup = 'paragraph';
+        expect(transformYfm(markup).meta).toBeUndefined();
+    });
+
+    it('should add default assets to meta', () => {
+        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        expect(
+            transformYfm(markup).meta
+        ).toStrictEqual({ script: ['_assets/cut-extension.js'], style: ['_assets/cut-extension.css'] });
+    });
+
+    it('should add custom assets to meta', () => {
+        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        expect(
+            transformYfm(markup, {runtime: 'yfm-cut'}).meta
+        ).toStrictEqual({ script: ['yfm-cut'], style: ['yfm-cut'] });
+    });
+
+    it('should add custom assets to meta 2', () => {
+        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        expect(
+            transformYfm(markup, {runtime: {script: 'yfm-cut.script', style: 'yfm-cut.style'}}).meta
+        ).toStrictEqual({ script: ['yfm-cut.script'], style: ['yfm-cut.style'] });
     });
 });

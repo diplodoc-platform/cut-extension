@@ -1,3 +1,5 @@
+export const ENV_FLAG_NAME = 'has-yfm-cut';
+
 export const TokenType = {
     Cut: 'yfm_cut',
     CutOpen: 'yfm_cut_open',

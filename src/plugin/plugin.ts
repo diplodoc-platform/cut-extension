@@ -1,7 +1,7 @@
 import type MarkdownIt from 'markdown-it';
 import type Core from 'markdown-it/lib/parser_core';
 
-import {ClassNames, TokenType} from './const';
+import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
 
 export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
@@ -61,6 +61,9 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                 ];
 
                 tokens.splice(i, closeTokenIdx - i + 3, ...insideTokens);
+
+                state.env ??= {};
+                state.env[ENV_FLAG_NAME] = true;
 
                 i++;
             } else {
