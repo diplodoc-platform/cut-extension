@@ -1,5 +1,6 @@
 import type MarkdownIt from 'markdown-it';
 import {cutPlugin} from './plugin';
+import {cutDirective} from './directive';
 import {type Runtime, copyRuntime, dynrequire, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 
@@ -11,6 +12,9 @@ export type TransformOptions = {
               style: string;
           };
     bundle?: boolean;
+    // TODO [major] disable curly syntax by default
+    /** @default true */
+    enableCurlySyntax?: boolean;
 };
 
 type NormalizedPluginOptions = Omit<TransformOptions, 'runtime'> & {
@@ -23,11 +27,15 @@ const registerTransform = (
         runtime,
         bundle,
         output,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime'> & {
+        enableCurlySyntax,
+    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'enableCurlySyntax'> & {
         output: string;
     },
 ) => {
-    md.use(cutPlugin);
+    if (enableCurlySyntax) {
+        md.use(cutPlugin);
+    }
+    md.use(cutDirective);
     md.core.ruler.push('yfm_cut_after', ({env}) => {
         hidden(env, 'bundled', new Set<string>());
 
@@ -50,7 +58,7 @@ type InputOptions = {
 };
 
 export function transform(options: Partial<TransformOptions> = {}) {
-    const {bundle = true} = options;
+    const {bundle = true, enableCurlySyntax = true} = options;
 
     if (bundle && typeof options.runtime === 'string') {
         throw new TypeError('Option `runtime` should be record when `bundle` is enabled.');
@@ -72,6 +80,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
             runtime,
             bundle,
             output,
+            enableCurlySyntax,
         });
     };
 

@@ -40,6 +40,9 @@
     "lint:fix": "eslint --fix .",
     "test": "jest"
   },
+  "dependencies": {
+    "markdown-it-directive": "^2.0.2"
+  },
   "devDependencies": {
     "@diplodoc/eslint-config": "^2.0.0",
     "@diplodoc/prettier-config": "^2.0.0",
