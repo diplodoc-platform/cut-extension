@@ -3,9 +3,7 @@ import transform from '@diplodoc/transform';
 import * as cutExtension from '../src/plugin';
 
 const transformYfm = (text: string, opts?: cutExtension.TransformOptions) => {
-    const {
-        result,
-    } = transform(text, {
+    const {result} = transform(text, {
         plugins: [cutExtension.transform({bundle: false, ...opts})],
     });
     return result;
@@ -18,9 +16,10 @@ describe('Cut extension - plugin', () => {
                 '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<div class="yfm-cut"><div class="yfm-cut-title">Cut title</div>' +
-                '<div class="yfm-cut-content"><p>Cut content</p>' +
-                '</div></div>',
+            '<details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut title</summary>' +
+                '<div class="yfm-cut-content"><p>Cut content</p></div>' +
+                '</details>',
         );
     });
 
@@ -36,9 +35,12 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<div class="yfm-cut"><div class="yfm-cut-title">Cut title</div>' +
-                '<div class="yfm-cut-content"><pre><code>Code</code></pre>' +
-                '</div></div>',
+            '<details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut title</summary>' +
+                '<div class="yfm-cut-content">' +
+                '<pre><code>Code</code></pre>' +
+                '</div>' +
+                '</details>',
         );
     });
 
@@ -58,12 +60,15 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<div class="yfm-cut"><div class="yfm-cut-title">Cut title 1</div>' +
-                '<div class="yfm-cut-content"><p>Cut content 1</p></div>' +
-                '</div>' +
-                '<div class="yfm-cut"><div class="yfm-cut-title">Cut title 2</div>' +
-                '<div class="yfm-cut-content"><p>Cut content 2</p></div>' +
-                '</div>',
+            '<details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut title 1</summary>' +
+                '<div class="yfm-cut-content"><p>Cut content 1</p>' +
+                '</div></details>' +
+                '<details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut title 2</summary>' +
+                '<div class="yfm-cut-content">' +
+                '<p>Cut content 2</p>' +
+                '</div></details>',
         );
     });
 
@@ -83,11 +88,12 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<div class="yfm-cut"><div class="yfm-cut-title">Outer title</div>' +
-                '<div class="yfm-cut-content"><p>Outer content</p>' +
-                '<div class="yfm-cut"><div class="yfm-cut-title">Inner title</div>' +
-                '<div class="yfm-cut-content"><p>Inner content</p></div>' +
-                '</div></div></div>',
+            '<details class="yfm-cut"><summary class="yfm-cut-title">' +
+                'Outer title</summary><div class="yfm-cut-content">' +
+                '<p>Outer content</p><details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Inner title</summary>' +
+                '<div class="yfm-cut-content"><p>Inner content</p>' +
+                '</div></details></div></details>',
         );
     });
 
@@ -101,10 +107,11 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<div class="yfm-cut">' +
-                '<div class="yfm-cut-title"><strong>Strong cut title</strong></div>' +
-                '<div class="yfm-cut-content"><p>Content we want to hide</p></div>' +
-                '</div>',
+            '<details class="yfm-cut"><summary class="yfm-cut-title">' +
+                '<strong>Strong cut title</strong>' +
+                '</summary><div class="yfm-cut-content">' +
+                '<p>Content we want to hide</p>' +
+                '</div></details>',
         );
     });
 
@@ -120,8 +127,11 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<ul><li><div class="yfm-cut"><div class="yfm-cut-title">Cut 1</div>' +
-                '<div class="yfm-cut-content"><p>Some text</p><p>Some text</p></div></div></li></ul>',
+            '<ul><li>' +
+                '<details class="yfm-cut"><summary class="yfm-cut-title">Cut 1</summary>' +
+                '<div class="yfm-cut-content"><p>Some text</p>' +
+                '<p>Some text</p>' +
+                '</div></details></li></ul>',
         );
     });
 
@@ -147,12 +157,16 @@ describe('Cut extension - plugin', () => {
                     '{% endcut %}',
             ).html.replace(/(\r\n|\n|\r)/gm, ''),
         ).toBe(
-            '<ul><li><div class="yfm-cut"><div class="yfm-cut-title">Cut 1</div>' +
-                '<div class="yfm-cut-content"><p>Some text</p></div></div></li>' +
-                '<li><div class="yfm-cut"><div class="yfm-cut-title">Cut 2</div>' +
-                '<div class="yfm-cut-content"><p>Some text</p></div></div></li>' +
-                '<li><div class="yfm-cut"><div class="yfm-cut-title">Cut 3</div>' +
-                '<div class="yfm-cut-content"><p>Some text</p></div></div></li></ul>',
+            '<ul><li>' +
+                '<details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut 1</summary>' +
+                '<div class="yfm-cut-content"><p>Some text</p></div>' +
+                '</details></li>' +
+                '<li><details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut 2</summary><div class="yfm-cut-content">' +
+                '<p>Some text</p></div></details></li><li><details class="yfm-cut">' +
+                '<summary class="yfm-cut-title">Cut 3</summary>' +
+                '<div class="yfm-cut-content"><p>Some text</p></div></details></li></ul>',
         );
     });
 
@@ -163,22 +177,25 @@ describe('Cut extension - plugin', () => {
 
     it('should add default assets to meta', () => {
         const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
-        expect(
-            transformYfm(markup).meta
-        ).toStrictEqual({ script: ['_assets/cut-extension.js'], style: ['_assets/cut-extension.css'] });
+        expect(transformYfm(markup).meta).toStrictEqual({
+            script: ['_assets/cut-extension.js'],
+            style: ['_assets/cut-extension.css'],
+        });
     });
 
     it('should add custom assets to meta', () => {
         const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
-        expect(
-            transformYfm(markup, {runtime: 'yfm-cut'}).meta
-        ).toStrictEqual({ script: ['yfm-cut'], style: ['yfm-cut'] });
+        expect(transformYfm(markup, {runtime: 'yfm-cut'}).meta).toStrictEqual({
+            script: ['yfm-cut'],
+            style: ['yfm-cut'],
+        });
     });
 
     it('should add custom assets to meta 2', () => {
         const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
         expect(
-            transformYfm(markup, {runtime: {script: 'yfm-cut.script', style: 'yfm-cut.style'}}).meta
-        ).toStrictEqual({ script: ['yfm-cut.script'], style: ['yfm-cut.style'] });
+            transformYfm(markup, {runtime: {script: 'yfm-cut.script', style: 'yfm-cut.style'}})
+                .meta,
+        ).toStrictEqual({script: ['yfm-cut.script'], style: ['yfm-cut.style']});
     });
 });
