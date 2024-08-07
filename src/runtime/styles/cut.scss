@@ -4,10 +4,19 @@
     margin-bottom: 15px;
 
     &-title {
+        list-style: none;
         cursor: pointer;
         position: relative;
         user-select: none;
         padding: 5px 0 5px 30px;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &:focus {
+            outline-color: $accentColor;
+        }
 
         &:before {
             content: '';
@@ -24,17 +33,10 @@
     }
 
     &-content {
-        display: none;
-        overflow: hidden;
-        transition: height 0.3s ease-in-out;
+        padding: 5px 0 15px 30px;
     }
 
     &.open {
-        > #{$class}-content {
-            display: revert;
-            padding: 5px 0 15px 30px;
-        }
-
         > #{$class}-title:before {
             transform: translateY(-50%);
         }

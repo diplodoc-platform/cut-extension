@@ -20,11 +20,11 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                     continue;
                 }
 
-                const newOpenToken = new state.Token(TokenType.CutOpen, 'div', 1);
+                const newOpenToken = new state.Token(TokenType.CutOpen, 'details', 1);
                 newOpenToken.attrSet('class', ClassNames.Cut);
                 newOpenToken.map = tokens[i].map;
 
-                const titleOpen = new state.Token(TokenType.TitleOpen, 'div', 1);
+                const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
                 titleOpen.attrSet('class', ClassNames.Title);
 
                 const titleInline = state.md.parseInline(
@@ -32,7 +32,7 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                     state.env,
                 )[0];
 
-                const titleClose = new state.Token(TokenType.TitleClose, 'div', -1);
+                const titleClose = new state.Token(TokenType.TitleClose, 'summary', -1);
 
                 const contentOpen = new state.Token(TokenType.ContentOpen, 'div', 1);
                 contentOpen.attrSet('class', ClassNames.Content);
@@ -46,7 +46,7 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
 
                 const contentClose = new state.Token(TokenType.ContentClose, 'div', -1);
 
-                const newCloseToken = new state.Token(TokenType.CutClose, 'div', -1);
+                const newCloseToken = new state.Token(TokenType.CutClose, 'details', -1);
                 newCloseToken.map = tokens[closeTokenIdx].map;
 
                 const insideTokens = [
