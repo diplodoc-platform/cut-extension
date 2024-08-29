@@ -1,5 +1,6 @@
 import type MarkdownIt from 'markdown-it';
 import type Core from 'markdown-it/lib/parser_core';
+import {AttrsParser} from '@diplodoc/utils';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
@@ -20,17 +21,25 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                     continue;
                 }
 
+                const title = match[1];
+                const attrs = match[2] || '';
+
+                if (typeof title === 'undefined') {
+                    throw new Error(`No title provided for cut ${match[0]}`);
+                }
+
+                const attrsParser = new AttrsParser(attrs);
+
                 const newOpenToken = new state.Token(TokenType.CutOpen, 'details', 1);
                 newOpenToken.attrSet('class', ClassNames.Cut);
                 newOpenToken.map = tokens[i].map;
 
+                attrsParser.apply(newOpenToken);
+
                 const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
                 titleOpen.attrSet('class', ClassNames.Title);
 
-                const titleInline = state.md.parseInline(
-                    match[1] === undefined ? 'ad' : match[1],
-                    state.env,
-                )[0];
+                const titleInline = state.md.parseInline(title, state.env)[0];
 
                 const titleClose = new state.Token(TokenType.TitleClose, 'summary', -1);
 

@@ -19,7 +19,7 @@ const common = {
 const plugin = {
     ...common,
     entryPoints: ['src/plugin/index.ts'],
-    outfile: outDir + 'plugin/index.js',
+    outfile: 'plugin/index.js',
     platform: 'node',
     packages: 'external',
 }
@@ -28,7 +28,7 @@ const plugin = {
 const runtime = {
     ...common,
     entryPoints: ['src/runtime/index.ts'],
-    outfile: outDir + 'runtime/index.js',
+    outfile: 'runtime/index.js',
     minify: true,
     platform: 'browser',
     plugins: [sassPlugin()],

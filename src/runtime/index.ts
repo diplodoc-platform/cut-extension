@@ -1,14 +1,14 @@
 import {GLOBAL_KEY} from './const';
-import {YfmCutContoller} from './contoller';
+import {YfmCutController} from './controller';
 
 import './styles/cut.scss';
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && !window[GLOBAL_KEY]) {
-    window[GLOBAL_KEY] = new YfmCutContoller(document);
+    window[GLOBAL_KEY] = new YfmCutController(document);
 }
 
 declare global {
     interface Window {
-        [GLOBAL_KEY]: YfmCutContoller;
+        [GLOBAL_KEY]: YfmCutController;
     }
 }

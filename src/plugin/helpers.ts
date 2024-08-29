@@ -1,6 +1,6 @@
 import type MdIt from 'markdown-it';
 
-const CUT_REGEXP = /^{%\s*cut\s*["|'](.*)["|']\s*%}/;
+const CUT_REGEXP = /^{%\s*cut\s*["|'](.*)["|']\s*%}(.*)?$/;
 
 export function matchOpenToken(tokens: MdIt.Token[], i: number) {
     return (

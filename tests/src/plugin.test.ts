@@ -1,6 +1,6 @@
 import transform from '@diplodoc/transform';
 
-import * as cutExtension from '../src/plugin';
+import * as cutExtension from '../../src/plugin';
 
 const transformYfm = (text: string, opts?: cutExtension.TransformOptions) => {
     const {result} = transform(text, {
