@@ -29,7 +29,8 @@
     "build"
   ],
   "scripts": {
-    "init": "husky install && npm run build && npm run test:init",
+    "init": "husky install && npm run build",
+    "postinstall": "npm run test:init",
     "precommit": "npm run lint && npm run test",
     "build": "run-p build:*",
     "build:js": "./esbuild/build.mjs",
