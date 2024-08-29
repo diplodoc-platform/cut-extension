@@ -3,9 +3,10 @@
 .idea
 .env
 
-/build
+/plugin
+/runtime
 /coverage
-/node_modules
+node_modules
 
 # libraries
 npm-debug.log

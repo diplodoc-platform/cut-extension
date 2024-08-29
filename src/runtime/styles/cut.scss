@@ -1,7 +1,16 @@
 .yfm-cut {
     $class: &;
+    $accentColor: red;
+    transition: all 150ms;
     
     margin-bottom: 15px;
+
+    &.cut-highlight  {
+        background-clip: content-box;
+        box-shadow: 0 3px 0 7px var(--g-color-base-simple-hover);
+        background-color: var(--g-color-base-simple-hover);
+        border-radius: 3px;
+    }
 
     &-title {
         list-style: none;
