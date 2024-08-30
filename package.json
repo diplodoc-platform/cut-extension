@@ -30,15 +30,13 @@
   ],
   "scripts": {
     "init": "husky install && npm run build",
-    "postinstall": "npm run test:init",
     "precommit": "npm run lint && npm run test",
     "build": "run-p build:*",
     "build:js": "./esbuild/build.mjs",
     "build:declarations": "tsc --emitDeclarationOnly --outDir .",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test:init": "cd tests && npm ci",
-    "test": "cd tests && jest",
+    "test": "cd tests && npm ci && jest",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
