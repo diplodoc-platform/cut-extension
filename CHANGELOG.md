@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.2...v0.2.3) (2024-08-30)
+
+
+### Bug Fixes
+
+* add prepublish script ([d48af1a](https://github.com/diplodoc-platform/cut-extension/commit/d48af1adf530132f8084c34e551c412bdafa7fac))
+
 ## [0.2.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.1...v0.2.2) (2024-08-30)
 
 
