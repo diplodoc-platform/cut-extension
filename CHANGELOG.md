@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.1...v0.2.2) (2024-08-30)
+
+
+### Bug Fixes
+
+* change npm files ([4d7703b](https://github.com/diplodoc-platform/cut-extension/commit/4d7703b38e453c4a44036f4cae67b437622925e8))
+
 ## [0.2.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.0...v0.2.1) (2024-08-30)
 
 
