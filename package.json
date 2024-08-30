@@ -38,7 +38,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "cd tests && npm ci && jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@diplodoc/eslint-config": "^2.0.0",
