@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.3...v0.2.4) (2024-09-03)
+
+
+### Bug Fixes
+
+* remove focus from plugin ([d563d57](https://github.com/diplodoc-platform/cut-extension/commit/d563d57f2721eb21d662b72eaeb9a0c031bf5c73))
+
 ## [0.2.3](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.2...v0.2.3) (2024-08-30)
 
 
