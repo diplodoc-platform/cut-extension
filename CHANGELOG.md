@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.4...v0.2.5) (2024-09-04)
+
+
+### Bug Fixes
+
+* change utils version ([c290526](https://github.com/diplodoc-platform/cut-extension/commit/c290526b22ff3999e25a3fd517096f1bed371389))
+
 ## [0.2.4](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.3...v0.2.4) (2024-09-03)
 
 
