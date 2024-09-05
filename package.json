@@ -35,7 +35,11 @@
     "build:declarations": "tsc --emitDeclarationOnly --outDir .",
     "test": "cd tests && npm ci && jest",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "lint": "lint update && lint",
+    "lint:fix": "lint update && lint fix",
+    "pre-commit": "lint update && lint-staged",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@diplodoc/tsconfig": "^1.0.2",
@@ -49,5 +53,8 @@
   },
   "peerDependencies": {
     "@diplodoc/utils": "1.0.0"
+  },
+  "dependencies": {
+    "@diplodoc/lint": "^1.1.3"
   }
 }
