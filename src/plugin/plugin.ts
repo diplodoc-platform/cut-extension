@@ -1,5 +1,6 @@
 import type MarkdownIt from 'markdown-it';
 import type Core from 'markdown-it/lib/parser_core';
+
 import {AttrsParser} from '@diplodoc/utils';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';

@@ -51,5 +51,6 @@ export function copy(from: string, to: string) {
  * Used for nodejs api
  */
 export function dynrequire(module: string) {
+    // eslint-disable-next-line no-eval
     return eval(`require('${module}')`);
 }

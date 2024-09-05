@@ -1,4 +1,5 @@
 import type MarkdownIt from 'markdown-it';
+
 import {cutPlugin} from './plugin';
 import {type Runtime, copyRuntime, dynrequire, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';

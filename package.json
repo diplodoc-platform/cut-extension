@@ -2,17 +2,17 @@
   "name": "@diplodoc/cut-extension",
   "version": "0.2.5",
   "description": "Cut extension for Diplodoc platform",
-  "main": "plugin/index.js",
-  "types": "plugin/index.d.ts",
+  "main": "build/plugin/index.js",
+  "types": "build/plugin/index.d.ts",
   "exports": {
     ".": {
-      "types": "./plugin/index.d.ts",
-      "default": "./plugin/index.js"
+      "types": "./build/plugin/index.d.ts",
+      "default": "./build/plugin/index.js"
     },
     "./runtime": {
-      "types": "./runtime/index.d.ts",
-      "style": "./runtime/index.css",
-      "default": "./runtime/index.js"
+      "types": "./build/runtime/index.d.ts",
+      "style": "./build/runtime/index.css",
+      "default": "./build/runtime/index.js"
     }
   },
   "homepage": "https://diplodoc.com/",
@@ -26,13 +26,12 @@
   "author": "",
   "license": "MIT",
   "files": [
-    "plugin",
-    "runtime"
+    "build"
   ],
   "scripts": {
     "build": "run-p build:*",
     "build:js": "./esbuild/build.mjs",
-    "build:declarations": "tsc --emitDeclarationOnly --outDir .",
+    "build:declarations": "tsc --emitDeclarationOnly --outDir ./build -p tsconfig.publish.json",
     "test": "cd tests && npm ci && jest",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
@@ -42,6 +41,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@diplodoc/lint": "^1.1.3",
     "@diplodoc/tsconfig": "^1.0.2",
     "@types/markdown-it": "^13.0.8",
     "esbuild": "^0.22.0",
@@ -53,8 +53,5 @@
   },
   "peerDependencies": {
     "@diplodoc/utils": "1.0.0"
-  },
-  "dependencies": {
-    "@diplodoc/lint": "^1.1.3"
   }
 }

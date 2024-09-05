@@ -12,9 +12,10 @@ const transformYfm = (text: string, opts?: cutExtension.TransformOptions) => {
 describe('Cut extension - plugin', () => {
     it('should render simple cut', () => {
         expect(
-            transformYfm(
-                '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}',
-            ).html.replace(/(\r\n|\n|\r)/gm, ''),
+            transformYfm('{% cut "Cut title" %}\n\nCut content\n\n{% endcut %}').html.replace(
+                /(\r\n|\n|\r)/gm,
+                '',
+            ),
         ).toBe(
             '<details class="yfm-cut">' +
                 '<summary class="yfm-cut-title">Cut title</summary>' +
@@ -176,7 +177,7 @@ describe('Cut extension - plugin', () => {
     });
 
     it('should add default assets to meta', () => {
-        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        const markup = '{% cut "Cut title" %}\n\nCut content\n\n{% endcut %}';
         expect(transformYfm(markup).meta).toStrictEqual({
             script: ['_assets/cut-extension.js'],
             style: ['_assets/cut-extension.css'],
@@ -184,7 +185,7 @@ describe('Cut extension - plugin', () => {
     });
 
     it('should add custom assets to meta', () => {
-        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        const markup = '{% cut "Cut title" %}\n\nCut content\n\n{% endcut %}';
         expect(transformYfm(markup, {runtime: 'yfm-cut'}).meta).toStrictEqual({
             script: ['yfm-cut'],
             style: ['yfm-cut'],
@@ -192,7 +193,7 @@ describe('Cut extension - plugin', () => {
     });
 
     it('should add custom assets to meta 2', () => {
-        const markup = '{% cut "Cut title" %}\n' + '\n' + 'Cut content\n' + '\n' + '{% endcut %}';
+        const markup = '{% cut "Cut title" %}\n\nCut content\n\n{% endcut %}';
         expect(
             transformYfm(markup, {runtime: {script: 'yfm-cut.script', style: 'yfm-cut.style'}})
                 .meta,
