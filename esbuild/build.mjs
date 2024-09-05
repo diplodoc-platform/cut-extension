@@ -3,15 +3,15 @@
 import {build} from 'esbuild';
 import {sassPlugin} from 'esbuild-sass-plugin';
 
-import tsConfig from '../tsconfig.json' assert {type: 'json'};
+import tsconfigJson from '../tsconfig.json' assert {type: 'json'};
 
-const outDir = 'build/';
+const outDir = 'build';
 
 /** @type {import('esbuild').BuildOptions}*/
 const common = {
     bundle: true,
     sourcemap: true,
-    target: tsConfig.compilerOptions.target,
+    target: tsconfigJson.compilerOptions.target,
     tsconfig: './tsconfig.json',
 };
 
