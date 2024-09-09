@@ -32,7 +32,7 @@
     "build": "run-p build:*",
     "build:js": "./esbuild/build.mjs",
     "build:declarations": "tsc --emitDeclarationOnly --outDir ./build -p tsconfig.publish.json",
-    "test": "cd tests && npm ci && jest",
+    "test": "cd tests && npm ci && npm test",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
     "lint": "lint update && lint",
