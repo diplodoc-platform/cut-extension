@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.5...v0.3.0) (2024-09-30)
+
+
+### Features
+
+* add react runtime ([03110ee](https://github.com/diplodoc-platform/cut-extension/commit/03110eed6c80d7da0eee7919d222d86b391b9b9c))
+
 ## [0.2.5](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.4...v0.2.5) (2024-09-04)
 
 
