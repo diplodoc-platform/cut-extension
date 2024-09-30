@@ -13,6 +13,31 @@ export class YfmCutController {
         this.__doc.removeEventListener('click', this._onDocClick);
     }
 
+    focusActiveCut() {
+        const cutId = window.location.hash.slice(1);
+        const cutNode = document.getElementById(cutId) as HTMLDetailsElement | null;
+
+        if (!(cutNode instanceof HTMLElement)) {
+            return;
+        }
+
+        if (!cutNode.matches(Selector.CUT)) {
+            return;
+        }
+
+        cutNode.classList.toggle(ClassName.OPEN);
+        cutNode.setAttribute('open', 'true');
+
+        setTimeout(() => {
+            cutNode.classList.add('cut-highlight');
+            cutNode.scrollIntoView();
+        }, 70);
+
+        setTimeout(() => {
+            cutNode.classList.remove('cut-highlight');
+        }, 1_000);
+    }
+
     private _onDocClick = (event: MouseEvent) => {
         if (isCustom(event)) {
             return;
