@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.3.0...v0.3.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* **package:** add exports for runtime styles ([#17](https://github.com/diplodoc-platform/cut-extension/issues/17)) ([d17f829](https://github.com/diplodoc-platform/cut-extension/commit/d17f829f78e2ddb34d38de3a8bb535f349fd2014))
+
 ## [0.3.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.2.5...v0.3.0) (2024-09-30)
 
 
