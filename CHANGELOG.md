@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.3.1...v0.3.2) (2024-10-24)
+
+
+### Bug Fixes
+
+* **styles:** deleted debug outline style ([#19](https://github.com/diplodoc-platform/cut-extension/issues/19)) ([cb45655](https://github.com/diplodoc-platform/cut-extension/commit/cb456554fb43637e04bc01f15339fae6e66e1e21))
+
 ## [0.3.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.3.0...v0.3.1) (2024-10-22)
 
 

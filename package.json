@@ -1,6 +1,6 @@
 {
   "name": "@diplodoc/cut-extension",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Cut extension for Diplodoc platform",
   "main": "build/plugin/index.js",
   "types": "build/plugin/index.d.ts",
