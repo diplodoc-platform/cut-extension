@@ -2,7 +2,7 @@
     $class: &;
     $accentColor: red;
     transition: all 150ms;
-    
+
     margin-bottom: 15px;
 
     &.cut-highlight  {
@@ -21,10 +21,6 @@
 
         &::-webkit-details-marker {
             display: none;
-        }
-
-        &:focus {
-            outline-color: $accentColor;
         }
 
         &:before {
