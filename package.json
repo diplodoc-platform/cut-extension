@@ -21,6 +21,16 @@
       "default": "./build/react/index.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "./build/plugin/index.d.ts"
+      ],
+      "runtime": [
+        "./build/runtime/index.d.ts"
+      ]
+    }
+  },
   "homepage": "https://diplodoc.com/",
   "repository": {
     "type": "git",
