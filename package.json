@@ -16,6 +16,16 @@
     },
     "./runtime/styles.css": "./build/runtime/index.css"
   },
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "./build/plugin/index.d.ts"
+      ],
+      "runtime": [
+        "./build/runtime/index.d.ts"
+      ]
+    }
+  },
   "homepage": "https://diplodoc.com/",
   "repository": {
     "type": "git",
