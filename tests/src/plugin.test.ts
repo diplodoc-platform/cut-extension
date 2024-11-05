@@ -1,5 +1,6 @@
 import transform from '@diplodoc/transform';
 import dd from 'ts-dedent';
+import MarkdownIt from 'markdown-it';
 
 import * as cutExtension from '../../src/plugin';
 
@@ -17,6 +18,11 @@ const meta = (text: string, opts?: cutExtension.TransformOptions) => {
     });
 
     return result.meta;
+};
+
+const parse = (text: string, opts?: cutExtension.TransformOptions) => {
+    const md = new MarkdownIt().use(cutExtension.transform({bundle: false, ...opts}));
+    return md.parse(text, {});
 };
 
 describe('Cut extension - plugin', () => {
@@ -185,6 +191,22 @@ describe('Cut extension - plugin', () => {
                     },
                 ),
             ).toStrictEqual({script: ['yfm-cut.script'], style: ['yfm-cut.style']});
+        });
+
+        it('should parse markup with cut to token stream', () => {
+            expect(
+                parse(dd`
+
+
+                {% cut "Cut _title_" %}
+
+                Cut content
+
+                {% endcut %}
+
+
+                `),
+            ).toMatchSnapshot();
         });
     });
 });
