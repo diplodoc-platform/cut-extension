@@ -209,4 +209,146 @@ describe('Cut extension - plugin', () => {
             ).toMatchSnapshot();
         });
     });
+
+    describe('directive syntax', () => {
+        it('should render directive cut', () => {
+            expect(
+                html(
+                    dd`
+                :::cut[Cut title]
+                Cut content
+                :::
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should render nested cut', () => {
+            expect(
+                html(
+                    dd`
+                :::cut[Outer title]
+                Outer content
+
+                :::cut[Inner title]
+                Inner content
+                :::
+                :::
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should render cut with inline markup in title', () => {
+            expect(
+                html(
+                    dd`
+                :::cut[**Strong cut title**]
+                Content we want to hide
+                :::
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should dont add assets to meta if no yfm-cut is found', () => {
+            expect(meta('paragraph', {syntax: 'directive'})).toBeUndefined();
+        });
+
+        it('should add assets to meta', () => {
+            expect(
+                meta(
+                    dd`
+                :::cut[Cut title]
+                Cut content
+                :::
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toStrictEqual({
+                script: ['_assets/cut-extension.js'],
+                style: ['_assets/cut-extension.css'],
+            });
+        });
+
+        it('should parse markup with cut to token stream', () => {
+            expect(
+                parse(
+                    dd`
+
+
+                :::cut[Cut _title_]
+                Cut content
+                :::
+
+
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should render cut with empty title', () => {
+            expect(
+                html(
+                    dd`
+                :::cut
+                Cut content
+                :::`,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should not render leaf cut', () => {
+            expect(
+                html(
+                    dd`
+                ::cut[Title]
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toMatchSnapshot();
+        });
+
+        it('should not add assets with leaf cut', () => {
+            expect(
+                meta(
+                    dd`
+                ::cut[Title]
+                `,
+                    {syntax: 'directive'},
+                ),
+            ).toBeUndefined();
+        });
+    });
+
+    describe('Options: syntax', () => {
+        const markup = dd`
+            {% cut "Old cut" %}
+
+            Old cut content
+
+            {% endcut %}
+
+            :::cut[Directive cut]
+            Directive cut content
+            :::
+            `;
+
+        it('should render only old (curly) cut', () => {
+            expect(html(markup, {syntax: 'curly'})).toMatchSnapshot();
+        });
+
+        it('should render only new (directive) cut', () => {
+            expect(html(markup, {syntax: 'directive'})).toMatchSnapshot();
+        });
+
+        it('should render both cuts', () => {
+            expect(html(markup, {syntax: 'both'})).toMatchSnapshot();
+        });
+    });
 });

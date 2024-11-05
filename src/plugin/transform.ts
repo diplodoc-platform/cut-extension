@@ -3,6 +3,9 @@ import type MarkdownIt from 'markdown-it';
 import {cutPlugin} from './plugin';
 import {type Runtime, copyRuntime, dynrequire, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
+import {cutDirective} from './directive';
+
+type Syntax = 'both' | 'curly' | 'directive';
 
 export type TransformOptions = {
     runtime?:
@@ -12,10 +15,13 @@ export type TransformOptions = {
               style: string;
           };
     bundle?: boolean;
+    /** @default 'curly' */
+    syntax?: Syntax;
 };
 
-type NormalizedPluginOptions = Omit<TransformOptions, 'runtime'> & {
+type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'syntax'> & {
     runtime: Runtime;
+    syntax: Syntax;
 };
 
 const registerTransform = (
@@ -23,12 +29,18 @@ const registerTransform = (
     {
         runtime,
         bundle,
+        syntax,
         output,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime'> & {
+    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'syntax'> & {
         output: string;
     },
 ) => {
-    md.use(cutPlugin);
+    if (syntax === 'curly' || syntax === 'both') {
+        md.use(cutPlugin);
+    }
+    if (syntax === 'directive' || syntax === 'both') {
+        md.use(cutDirective);
+    }
     md.core.ruler.push('yfm_cut_after', ({env}) => {
         hidden(env, 'bundled', new Set<string>());
 
@@ -57,6 +69,8 @@ export function transform(options: Partial<TransformOptions> = {}) {
         throw new TypeError('Option `runtime` should be record when `bundle` is enabled.');
     }
 
+    const syntax: Syntax = options.syntax ?? 'curly';
+
     const runtime: Runtime =
         typeof options.runtime === 'string'
             ? {script: options.runtime, style: options.runtime}
@@ -70,6 +84,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
         {output = '.'} = {},
     ) {
         registerTransform(md, {
+            syntax,
             runtime,
             bundle,
             output,
@@ -81,6 +96,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
             const MdIt = dynrequire('markdown-it');
             const md = new MdIt().use((md: MarkdownIt) => {
                 registerTransform(md, {
+                    syntax,
                     runtime,
                     bundle,
                     output: destRoot,
