@@ -2,7 +2,8 @@
   "name": "@diplodoc/tests",
   "private": true,
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@diplodoc/transform": "^4.28.2",

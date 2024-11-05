@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cut extension - plugin should close all tags correctly and insert two p tags 1`] = `
+exports[`Cut extension - plugin curly syntax should close all tags correctly and insert two p tags 1`] = `
 <ul>
   <li>
     <details class="yfm-cut">
@@ -20,7 +20,7 @@ exports[`Cut extension - plugin should close all tags correctly and insert two p
 </ul>
 `;
 
-exports[`Cut extension - plugin should close all tags correctly when given a bullet-list with several items 1`] = `
+exports[`Cut extension - plugin curly syntax should close all tags correctly when given a bullet-list with several items 1`] = `
 <ul>
   <li>
     <details class="yfm-cut">
@@ -61,7 +61,7 @@ exports[`Cut extension - plugin should close all tags correctly when given a bul
 </ul>
 `;
 
-exports[`Cut extension - plugin should render nested cuts 1`] = `
+exports[`Cut extension - plugin curly syntax should render nested cuts 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Outer title
@@ -84,7 +84,7 @@ exports[`Cut extension - plugin should render nested cuts 1`] = `
 </details>
 `;
 
-exports[`Cut extension - plugin should render siblings cuts 1`] = `
+exports[`Cut extension - plugin curly syntax should render siblings cuts 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Cut title 1
@@ -107,7 +107,7 @@ exports[`Cut extension - plugin should render siblings cuts 1`] = `
 </details>
 `;
 
-exports[`Cut extension - plugin should render simple cut 1`] = `
+exports[`Cut extension - plugin curly syntax should render simple cut 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Cut title
@@ -120,7 +120,7 @@ exports[`Cut extension - plugin should render simple cut 1`] = `
 </details>
 `;
 
-exports[`Cut extension - plugin should render simple cut with code in it 1`] = `
+exports[`Cut extension - plugin curly syntax should render simple cut with code in it 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Cut title
@@ -135,7 +135,7 @@ exports[`Cut extension - plugin should render simple cut with code in it 1`] = `
 </details>
 `;
 
-exports[`Cut extension - plugin should render title with format 1`] = `
+exports[`Cut extension - plugin curly syntax should render title with format 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     <strong>
