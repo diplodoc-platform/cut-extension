@@ -503,7 +503,7 @@ exports[`Cut extension - plugin directive syntax should parse markup with cut to
       2,
       5,
     ],
-    "markup": ":::",
+    "markup": ":::cut",
     "meta": null,
     "nesting": 1,
     "tag": "details",
