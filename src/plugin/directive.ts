@@ -1,15 +1,14 @@
 import type MarkdownIt from 'markdown-it';
 
-import {directiveParser, registerBlockDirective} from '@diplodoc/directive';
+import {directiveParser, registerContainerDirective} from '@diplodoc/directive';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 
 export const cutDirective: MarkdownIt.PluginSimple = (md) => {
     md.use(directiveParser());
 
-    registerBlockDirective(md, {
+    registerContainerDirective(md, {
         name: 'cut',
-        type: 'container',
         match(_params, state) {
             state.env ??= {};
             state.env[ENV_FLAG_NAME] = true;

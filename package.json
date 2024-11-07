@@ -47,7 +47,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@diplodoc/directive": "file:../diplodoc-directive/diplodoc-directive-0.0.0-4.tgz"
+    "@diplodoc/directive": "file:../diplodoc-directive/diplodoc-directive-0.0.0-8.tgz"
   },
   "devDependencies": {
     "@diplodoc/lint": "^1.2.0",
