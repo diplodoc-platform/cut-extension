@@ -219,7 +219,7 @@ describe('Cut extension - plugin', () => {
                 Cut content
                 :::
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
@@ -236,7 +236,7 @@ describe('Cut extension - plugin', () => {
                 :::
                 :::
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
@@ -249,13 +249,13 @@ describe('Cut extension - plugin', () => {
                 Content we want to hide
                 :::
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
 
         it('should dont add assets to meta if no yfm-cut is found', () => {
-            expect(meta('paragraph', {syntax: 'directive'})).toBeUndefined();
+            expect(meta('paragraph', {directiveSyntax: 'only'})).toBeUndefined();
         });
 
         it('should add assets to meta', () => {
@@ -266,7 +266,7 @@ describe('Cut extension - plugin', () => {
                 Cut content
                 :::
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toStrictEqual({
                 script: ['_assets/cut-extension.js'],
@@ -286,7 +286,7 @@ describe('Cut extension - plugin', () => {
 
 
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
@@ -298,7 +298,7 @@ describe('Cut extension - plugin', () => {
                 :::cut
                 Cut content
                 :::`,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
@@ -309,7 +309,7 @@ describe('Cut extension - plugin', () => {
                     dd`
                 ::cut[Title]
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toMatchSnapshot();
         });
@@ -320,13 +320,13 @@ describe('Cut extension - plugin', () => {
                     dd`
                 ::cut[Title]
                 `,
-                    {syntax: 'directive'},
+                    {directiveSyntax: 'only'},
                 ),
             ).toBeUndefined();
         });
     });
 
-    describe('Options: syntax', () => {
+    describe('Options: directiveSyntax', () => {
         const markup = dd`
             {% cut "Old cut" %}
 
@@ -340,15 +340,15 @@ describe('Cut extension - plugin', () => {
             `;
 
         it('should render only old (curly) cut', () => {
-            expect(html(markup, {syntax: 'curly'})).toMatchSnapshot();
+            expect(html(markup, {directiveSyntax: 'disabled'})).toMatchSnapshot();
         });
 
         it('should render only new (directive) cut', () => {
-            expect(html(markup, {syntax: 'directive'})).toMatchSnapshot();
+            expect(html(markup, {directiveSyntax: 'only'})).toMatchSnapshot();
         });
 
         it('should render both cuts', () => {
-            expect(html(markup, {syntax: 'both'})).toMatchSnapshot();
+            expect(html(markup, {directiveSyntax: 'enabled'})).toMatchSnapshot();
         });
     });
 });

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cut extension - plugin Options: syntax should render both cuts 1`] = `
+exports[`Cut extension - plugin Options: directiveSyntax should render both cuts 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Old cut
@@ -23,7 +23,7 @@ exports[`Cut extension - plugin Options: syntax should render both cuts 1`] = `
 </details>
 `;
 
-exports[`Cut extension - plugin Options: syntax should render only new (directive) cut 1`] = `
+exports[`Cut extension - plugin Options: directiveSyntax should render only new (directive) cut 1`] = `
 <p>
 </p>
 <p>
@@ -43,7 +43,7 @@ exports[`Cut extension - plugin Options: syntax should render only new (directiv
 </details>
 `;
 
-exports[`Cut extension - plugin Options: syntax should render only old (curly) cut 1`] = `
+exports[`Cut extension - plugin Options: directiveSyntax should render only old (curly) cut 1`] = `
 <details class="yfm-cut">
   <summary class="yfm-cut-title">
     Old cut

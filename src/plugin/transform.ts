@@ -5,8 +5,6 @@ import {type Runtime, copyRuntime, dynrequire, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 import {cutDirective} from './directive';
 
-type Syntax = 'both' | 'curly' | 'directive';
-
 export type TransformOptions = {
     runtime?:
         | string
@@ -15,13 +13,21 @@ export type TransformOptions = {
               style: string;
           };
     bundle?: boolean;
-    /** @default 'curly' */
-    syntax?: Syntax;
+    /**
+     * Enables directive syntax of yfm-cut.
+     *
+     * - 'disabled' – directive syntax is disabled.
+     * - 'enabled' – directive syntax is enabled; old syntax is also enabled.
+     * - 'only' – enabled only directive syntax; old syntax is disabled.
+     *
+     * @default 'disabled'
+     */
+    directiveSyntax?: 'disabled' | 'enabled' | 'only';
 };
 
-type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'syntax'> & {
+type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'directiveSyntax'> & {
     runtime: Runtime;
-    syntax: Syntax;
+    directiveSyntax: NonNullable<TransformOptions['directiveSyntax']>;
 };
 
 const registerTransform = (
@@ -29,16 +35,16 @@ const registerTransform = (
     {
         runtime,
         bundle,
-        syntax,
         output,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'syntax'> & {
+        directiveSyntax,
+    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'directiveSyntax'> & {
         output: string;
     },
 ) => {
-    if (syntax === 'curly' || syntax === 'both') {
+    if (directiveSyntax === 'disabled' || directiveSyntax === 'enabled') {
         md.use(cutPlugin);
     }
-    if (syntax === 'directive' || syntax === 'both') {
+    if (directiveSyntax === 'enabled' || directiveSyntax === 'only') {
         md.use(cutDirective);
     }
     md.core.ruler.push('yfm_cut_after', ({env}) => {
@@ -69,8 +75,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
         throw new TypeError('Option `runtime` should be record when `bundle` is enabled.');
     }
 
-    const syntax: Syntax = options.syntax ?? 'curly';
-
+    const directiveSyntax = options.directiveSyntax || 'disabled';
     const runtime: Runtime =
         typeof options.runtime === 'string'
             ? {script: options.runtime, style: options.runtime}
@@ -84,7 +89,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
         {output = '.'} = {},
     ) {
         registerTransform(md, {
-            syntax,
+            directiveSyntax,
             runtime,
             bundle,
             output,
@@ -96,7 +101,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
             const MdIt = dynrequire('markdown-it');
             const md = new MdIt().use((md: MarkdownIt) => {
                 registerTransform(md, {
-                    syntax,
+                    directiveSyntax,
                     runtime,
                     bundle,
                     output: destRoot,
