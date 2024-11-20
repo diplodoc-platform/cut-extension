@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.3.2...v0.4.0) (2024-11-20)
+
+
+### Features
+
+* **plugin:** support directive syntax ([#22](https://github.com/diplodoc-platform/cut-extension/issues/22)) ([415977d](https://github.com/diplodoc-platform/cut-extension/commit/415977d61e2cc6d99c7709d8caca36d094743202))
+
 ## [0.3.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.3.1...v0.3.2) (2024-10-24)
 
 
