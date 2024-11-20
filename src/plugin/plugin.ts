@@ -34,6 +34,7 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                 const newOpenToken = new state.Token(TokenType.CutOpen, 'details', 1);
                 newOpenToken.attrSet('class', ClassNames.Cut);
                 newOpenToken.map = tokens[i].map;
+                newOpenToken.markup = '{%';
 
                 attrsParser.apply(newOpenToken);
 

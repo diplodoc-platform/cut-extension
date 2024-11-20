@@ -46,6 +46,9 @@
     "pre-commit": "lint update && lint-staged",
     "prepare": "husky"
   },
+  "dependencies": {
+    "@diplodoc/directive": "^0.1.0"
+  },
   "devDependencies": {
     "@diplodoc/lint": "^1.2.0",
     "@diplodoc/tsconfig": "^1.0.2",
