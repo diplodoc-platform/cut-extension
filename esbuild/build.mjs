@@ -3,15 +3,15 @@
 import {build} from 'esbuild';
 import {sassPlugin} from 'esbuild-sass-plugin';
 
-import tsConfig from '../tsconfig.json' assert { type: "json" };
+import tsconfigJson from '../tsconfig.json' assert {type: 'json'};
 
-const outDir = 'build/';
+const outDir = 'build';
 
 /** @type {import('esbuild').BuildOptions}*/
 const common = {
     bundle: true,
     sourcemap: true,
-    target: tsConfig.compilerOptions.target,
+    target: tsconfigJson.compilerOptions.target,
     tsconfig: './tsconfig.json',
 };
 
@@ -19,20 +19,32 @@ const common = {
 const plugin = {
     ...common,
     entryPoints: ['src/plugin/index.ts'],
-    outfile: outDir + 'plugin/index.js',
+    outfile: outDir + '/plugin/index.js',
     platform: 'node',
     packages: 'external',
-}
+};
 
 /** @type {import('esbuild').BuildOptions}*/
 const runtime = {
     ...common,
     entryPoints: ['src/runtime/index.ts'],
-    outfile: outDir + 'runtime/index.js',
+    outfile: outDir + '/runtime/index.js',
     minify: true,
     platform: 'browser',
     plugins: [sassPlugin()],
 };
 
+/** @type {import('esbuild').BuildOptions}*/
+const runtimeReact = {
+    ...common,
+    entryPoints: ['src/react/index.tsx'],
+    outfile: outDir + '/react/index.js',
+    minify: true,
+    platform: 'neutral',
+    plugins: [],
+    external: ['react'],
+};
+
 build(plugin);
 build(runtime);
+build(runtimeReact);

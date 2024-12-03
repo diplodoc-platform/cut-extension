@@ -1,6 +1,6 @@
 {
   "name": "@diplodoc/cut-extension",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "Cut extension for Diplodoc platform",
   "main": "build/plugin/index.js",
   "types": "build/plugin/index.d.ts",
@@ -14,7 +14,12 @@
       "style": "./build/runtime/index.css",
       "default": "./build/runtime/index.js"
     },
-    "./runtime/styles.css": "./build/runtime/index.css"
+    "./runtime/styles": "./build/runtime/index.css",
+    "./runtime/styles.css": "./build/runtime/index.css",
+    "./react": {
+      "types": "./build/react/index.d.ts",
+      "default": "./build/react/index.js"
+    }
   },
   "typesVersions": {
     "*": {
@@ -40,30 +45,33 @@
     "build"
   ],
   "scripts": {
-    "init": "husky install && npm run build",
-    "precommit": "npm run lint && npm run test",
     "build": "run-p build:*",
     "build:js": "./esbuild/build.mjs",
-    "build:declarations": "tsc --emitDeclarationOnly --outDir ./build",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "test": "jest"
+    "build:declarations": "tsc --emitDeclarationOnly --outDir ./build -p tsconfig.publish.json",
+    "test": "cd tests && npm ci && npm test",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "lint": "lint update && lint",
+    "lint:fix": "lint update && lint fix",
+    "pre-commit": "lint update && lint-staged",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@diplodoc/directive": "^0.3.0"
   },
   "devDependencies": {
-    "@diplodoc/eslint-config": "^2.0.0",
-    "@diplodoc/prettier-config": "^2.0.0",
-    "@diplodoc/transform": "^4.20.0",
+    "@diplodoc/lint": "^1.2.0",
     "@diplodoc/tsconfig": "^1.0.2",
-    "@types/jest": "^29.5.12",
-    "@types/markdown-it": "^13.0.8",
+    "@types/markdown-it": "^13.0.9",
+    "@types/react": "^18.3.9",
     "esbuild": "^0.22.0",
     "esbuild-sass-plugin": "^3.3.1",
-    "husky": "^9.0.11",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
     "markdown-it": "^13.0.2",
     "npm-run-all": "^4.1.5",
-    "ts-jest": "^29.2.2",
     "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "@diplodoc/utils": "1.0.0",
+    "react": "^16.8.0  || ^17.0.0 || ^18.0.0"
   }
 }
