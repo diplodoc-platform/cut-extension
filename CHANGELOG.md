@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.5.0...v0.6.0) (2024-12-18)
+
+
+### Features
+
+* move utils from peer ([4d1d068](https://github.com/diplodoc-platform/cut-extension/commit/4d1d0689a42082984f98df05b2a6153f0f7a3b33))
+
 ## [0.5.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.4.0...v0.5.0) (2024-11-27)
 
 
