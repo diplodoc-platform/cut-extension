@@ -47,7 +47,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@diplodoc/directive": "^0.3.0"
+    "@diplodoc/directive": "^0.3.0",
+    "@diplodoc/utils": "^1.0.0"
   },
   "devDependencies": {
     "@diplodoc/lint": "^1.2.0",
@@ -61,7 +62,6 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@diplodoc/utils": "1.0.0",
     "react": "^16.8.0  || ^17.0.0 || ^18.0.0"
   }
 }
