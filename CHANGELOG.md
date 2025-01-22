@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.6.0...v0.6.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* workaround for cut page search ([#30](https://github.com/diplodoc-platform/cut-extension/issues/30)) ([171da43](https://github.com/diplodoc-platform/cut-extension/commit/171da43b970d08afde5411a602ab11fba4bc76ac))
+
 ## [0.6.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.5.0...v0.6.0) (2024-12-18)
 
 
