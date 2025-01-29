@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.0...v0.7.1) (2025-01-29)
+
+
+### Bug Fixes
+
+* bump utils v2.0.1 ([5f73b6c](https://github.com/diplodoc-platform/cut-extension/commit/5f73b6cd9f88e6b7db80ca100ab4f5b67fbed769))
+
 ## [0.7.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.6.1...v0.7.0) (2025-01-29)
 
 
