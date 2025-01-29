@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@diplodoc/directive": "^0.3.0",
-    "@diplodoc/utils": "^2.0.0"
+    "@diplodoc/utils": "^2.0.1"
   },
   "devDependencies": {
     "@diplodoc/lint": "^1.2.0",
