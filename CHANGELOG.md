@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.6.1...v0.7.0) (2025-01-29)
+
+
+### Features
+
+* bump utils lib, optional react ([46f6ccc](https://github.com/diplodoc-platform/cut-extension/commit/46f6cccc7a817205feab1e2564af0130d6f87252))
+
 ## [0.6.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.6.0...v0.6.1) (2025-01-22)
 
 
