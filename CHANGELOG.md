@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.1...v0.7.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* remove redundant list styles ([#35](https://github.com/diplodoc-platform/cut-extension/issues/35)) ([50a568a](https://github.com/diplodoc-platform/cut-extension/commit/50a568af8bdb7e0f92b0e5af164e58ba8ebc930e))
+
 ## [0.7.1](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.0...v0.7.1) (2025-01-29)
 
 
