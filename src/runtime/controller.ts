@@ -17,25 +17,20 @@ export class YfmCutController {
         const cutId = window.location.hash.slice(1);
         const cutNode = document.getElementById(cutId) as HTMLDetailsElement | null;
 
-        if (!(cutNode instanceof HTMLElement)) {
-            return;
-        }
-
-        if (!cutNode.matches(Selector.CUT)) {
+        if (!(cutNode instanceof HTMLElement) || !cutNode.matches(Selector.CUT)) {
             return;
         }
 
         cutNode.classList.toggle(ClassName.OPEN);
         cutNode.setAttribute('open', 'true');
 
-        setTimeout(() => {
-            cutNode.classList.add('cut-highlight');
-            cutNode.scrollIntoView();
-        }, 70);
+        cutNode.classList.add('cut-highlight');
+        cutNode.scrollIntoView();
 
-        setTimeout(() => {
+        cutNode.addEventListener('animationend', function removeHighlight() {
             cutNode.classList.remove('cut-highlight');
-        }, 1_000);
+            cutNode.removeEventListener('animationend', removeHighlight);
+        });
     }
 
     private _onDocClick = (event: MouseEvent) => {
