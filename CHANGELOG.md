@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.2...v0.7.3) (2025-02-27)
+
+
+### Bug Fixes
+
+* make cute title text selectable ([#38](https://github.com/diplodoc-platform/cut-extension/issues/38)) ([7dff3c7](https://github.com/diplodoc-platform/cut-extension/commit/7dff3c7e8175d3888c1c0f880e3b5c9286866ee4))
+
 ## [0.7.2](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.1...v0.7.2) (2025-02-04)
 
 
