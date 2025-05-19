@@ -4,7 +4,6 @@ details.yfm-cut > .yfm-cut-content {
 
 .yfm-cut {
     $class: &;
-    $accentColor: red;
     transition: all 150ms;
 
     margin-bottom: 15px;
