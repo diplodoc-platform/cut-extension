@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.3...v0.7.4) (2025-05-21)
+
+
+### Bug Fixes
+
+* **styles:** fixed float handling in content ([#42](https://github.com/diplodoc-platform/cut-extension/issues/42)) ([21c9417](https://github.com/diplodoc-platform/cut-extension/commit/21c941702f12970b0e5d75e4ba3207d4bf31def6))
+
 ## [0.7.3](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.2...v0.7.3) (2025-02-27)
 
 
