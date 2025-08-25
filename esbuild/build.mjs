@@ -3,7 +3,7 @@
 import {build} from 'esbuild';
 import {sassPlugin} from 'esbuild-sass-plugin';
 
-import tsconfigJson from '../tsconfig.json' assert {type: 'json'};
+import tsconfigJson from '../tsconfig.json' with {type: 'json'};
 
 const outDir = 'build';
 
