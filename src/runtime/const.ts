@@ -5,7 +5,3 @@ export const Selector = {
     TITLE: '.yfm .yfm-cut-title',
     CONTENT: '.yfm .yfm-cut-content',
 };
-
-export const ClassName = {
-    OPEN: 'open',
-};
