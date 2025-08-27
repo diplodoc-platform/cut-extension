@@ -10,19 +10,50 @@ export function hidden<B extends Record<string | symbol, unknown>, F extends str
         });
     }
 
-    return box as B & {[P in F]: V};
+    return box as B & Record<F, V>;
 }
 
-export type Runtime = {
-    script: string;
-    style: string;
-};
+export type RawRuntime =
+    | false
+    | string
+    | undefined
+    | {
+          script: string;
+          style: string;
+      };
+
+export type Runtime =
+    | {
+          script: string;
+          style: string;
+      }
+    | false;
+
+export function getRuntime(runtime: RawRuntime) {
+    if (typeof runtime === 'string') {
+        return {
+            script: runtime,
+            style: runtime,
+        };
+    } else if (typeof runtime === 'undefined') {
+        return {
+            script: '_assets/cut-extension.js',
+            style: '_assets/cut-extension.css',
+        };
+    } else {
+        return runtime;
+    }
+}
 
 declare const __dirname: string;
 export function copyRuntime(
     {runtime, output}: {runtime: Runtime; output: string},
     cache: Set<string>,
 ) {
+    if (!runtime) {
+        return;
+    }
+
     const PATH_TO_RUNTIME = '../runtime';
     const {join, resolve} = dynrequire('node:path');
     const runtimeFiles = {

@@ -1,17 +1,13 @@
 import type MarkdownIt from 'markdown-it';
+import type {RawRuntime, Runtime} from './utils';
 
 import {cutPlugin} from './plugin';
-import {type Runtime, copyRuntime, dynrequire, hidden} from './utils';
+import {copyRuntime, dynrequire, getRuntime, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 import {cutDirective} from './directive';
 
 export type TransformOptions = {
-    runtime?:
-        | string
-        | {
-              script: string;
-              style: string;
-          };
+    runtime?: RawRuntime;
     bundle?: boolean;
     /**
      * Enables directive syntax of yfm-cut.
@@ -50,7 +46,7 @@ const registerTransform = (
     md.core.ruler.push('yfm_cut_after', ({env}) => {
         hidden(env, 'bundled', new Set<string>());
 
-        if (env?.[ENV_FLAG_NAME]) {
+        if (env?.[ENV_FLAG_NAME] && runtime) {
             env.meta = env.meta || {};
             env.meta.script = env.meta.script || [];
             env.meta.script.push(runtime.script);
@@ -76,13 +72,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
     }
 
     const directiveSyntax = options.directiveSyntax || 'disabled';
-    const runtime: Runtime =
-        typeof options.runtime === 'string'
-            ? {script: options.runtime, style: options.runtime}
-            : options.runtime || {
-                  script: '_assets/cut-extension.js',
-                  style: '_assets/cut-extension.css',
-              };
+    const runtime: Runtime = getRuntime(options.runtime);
 
     const plugin: MarkdownIt.PluginWithOptions<{output?: string}> = function (
         md: MarkdownIt,
