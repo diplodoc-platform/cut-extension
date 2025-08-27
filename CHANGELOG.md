@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.4...v0.8.0) (2025-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove useless click handler
+
+### Features
+
+* Add runtime `false` value ([1e32222](https://github.com/diplodoc-platform/cut-extension/commit/1e322226851751b1e9cca3fe8aa0f7e49a6cbda9))
+* Add scrollIntoView options ([d466a37](https://github.com/diplodoc-platform/cut-extension/commit/d466a3752860f08d9b01fd98acb04a6b7062290f))
+* Remove useless click handler ([1cfb113](https://github.com/diplodoc-platform/cut-extension/commit/1cfb113913cd19ab9e14b078be9caec3cf863e1d))
+
+
+### Bug Fixes
+
+* update version actions, node 22 ([d448b8a](https://github.com/diplodoc-platform/cut-extension/commit/d448b8a94bde7fa70dcaf4038f155a07ba1f88e8))
+
 ## [0.7.4](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.3...v0.7.4) (2025-05-21)
 
 
