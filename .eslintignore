@@ -3,6 +3,8 @@
 .history
 .env
 .DS_Store
+.eslintrc.js
+jest.config.js
 node_modules
 /lib
 /dist

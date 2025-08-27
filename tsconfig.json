@@ -5,6 +5,5 @@
     "module": "es2022",
     "declaration": true
   },
-  "include": ["src", "tests"],
   "exclude": ["node_modules"]
 }
