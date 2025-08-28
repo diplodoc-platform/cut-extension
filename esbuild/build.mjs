@@ -34,17 +34,5 @@ const runtime = {
     plugins: [sassPlugin()],
 };
 
-/** @type {import('esbuild').BuildOptions}*/
-const runtimeReact = {
-    ...common,
-    entryPoints: ['src/react/index.tsx'],
-    outfile: outDir + '/react/index.js',
-    minify: true,
-    platform: 'neutral',
-    plugins: [],
-    external: ['react'],
-};
-
 build(plugin);
 build(runtime);
-build(runtimeReact);
