@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/diplodoc-platform/cut-extension/compare/v1.0.0...v1.1.0) (2025-08-28)
+
+
+### Features
+
+* Handle browser focus ([eae877c](https://github.com/diplodoc-platform/cut-extension/commit/eae877c1e81429b18aa0c9d67199b2aeb4c98b95))
+* Remove useless React runtime ([81c2e6b](https://github.com/diplodoc-platform/cut-extension/commit/81c2e6b05309c18e164b117b3687952e65329004))
+
 ## [1.0.0](https://github.com/diplodoc-platform/cut-extension/compare/v0.7.4...v0.8.0) (2025-08-27)
 
 ### ⚠ BREAKING CHANGES
