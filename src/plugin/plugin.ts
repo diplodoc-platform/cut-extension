@@ -41,6 +41,14 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                 const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
                 titleOpen.attrSet('class', ClassNames.Title);
 
+                // Id should be placed on summary element.
+                // This way it will be accessible by browser focus
+                const id = newOpenToken.attrGet('id');
+                if (id) {
+                    titleOpen.attrSet('id', id);
+                    newOpenToken.attrSet('id', '');
+                }
+
                 const titleInline = state.md.parseInline(title, state.env)[0];
 
                 const titleClose = new state.Token(TokenType.TitleClose, 'summary', -1);

@@ -16,4 +16,5 @@ export const ClassNames = {
     Cut: 'yfm-cut',
     Title: 'yfm-cut-title',
     Content: 'yfm-cut-content',
+    Highlight: 'yfm-cut-highlight',
 } as const;

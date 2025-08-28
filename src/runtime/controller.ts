@@ -1,58 +1,69 @@
-import {Selector} from './const';
-
-export type CutScrollOptions = {
-    offset: number;
-    behavior: 'smooth' | 'instant' | 'auto';
-};
+import {ClassNames} from '../plugin/const';
 
 export class YfmCutController {
-    focusActiveCut(options: Partial<CutScrollOptions> = {}) {
-        const cutId = window.location.hash.slice(1);
-        if (!cutId) {
+    private disposers: Function[] = [];
+
+    constructor() {
+        this.disposers.push(this.init());
+    }
+
+    init() {
+        let mouseEvent = false;
+        const keepMouse = () => {
+            mouseEvent = true;
+        };
+        const amendMouse = () => {
+            mouseEvent = false;
+        };
+        const onFocus = (event: Event) => {
+            if (isSummary(event.target) && !mouseEvent) {
+                this.focusActiveCut(event.target);
+            }
+        };
+
+        document.addEventListener('mousedown', keepMouse);
+        document.addEventListener('mouseup', amendMouse);
+        document.addEventListener('focus', onFocus, true);
+
+        return () => {
+            document.removeEventListener('mousedown', keepMouse);
+            document.removeEventListener('mouseup', amendMouse);
+            document.removeEventListener('focus', onFocus, true);
+        };
+    }
+
+    dispose() {
+        for (const disposer of this.disposers) {
+            disposer();
+        }
+    }
+
+    private focusActiveCut(summary: HTMLElement) {
+        const cutNode = summary.parentNode;
+        if (!isDetails(cutNode)) {
             return;
         }
-
-        const cutNode = document.getElementById(cutId) as HTMLDetailsElement | null;
-        if (!(cutNode instanceof HTMLElement) || !cutNode.matches(Selector.CUT)) {
-            return;
-        }
-
-        this.openCut(cutNode);
 
         setTimeout(() => {
-            cutNode.classList.add('cut-highlight');
-            scrollIntoView(cutNode, options);
+            cutNode.classList.add(ClassNames.Highlight);
         }, 70);
 
         setTimeout(() => {
-            cutNode.classList.remove('cut-highlight');
+            cutNode.classList.remove(ClassNames.Highlight);
         }, 1000);
-    }
-
-    private openCut(element: HTMLElement) {
-        let node: HTMLElement | null | undefined = element.closest<HTMLElement>(Selector.CUT);
-        if (!node) {
-            return;
-        }
-
-        while (node) {
-            node.setAttribute('open', 'true');
-            node = node.parentElement?.closest(Selector.CUT);
-        }
     }
 }
 
-function scrollIntoView(element: Element, options: Partial<CutScrollOptions>) {
-    const {offset, behavior} = {offset: 0, behavior: 'instant' as const, ...options};
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - offset;
+function isDetails(element: unknown): element is HTMLElement {
+    return (
+        (element as HTMLElement)?.tagName?.toLowerCase() === 'details' &&
+        (element as HTMLElement)?.classList.contains(ClassNames.Cut)
+    );
+}
 
-    if (window.scrollY - offset < elementPosition) {
-        return;
-    }
-
-    window.scrollTo({
-        top: offsetPosition,
-        behavior,
-    });
+function isSummary(element: unknown): element is HTMLElement {
+    return (
+        (element as HTMLElement)?.tagName?.toLowerCase() === 'summary' &&
+        (element as HTMLElement)?.classList.contains(ClassNames.Title)
+    );
 }

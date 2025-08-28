@@ -8,7 +8,7 @@ details.yfm-cut > .yfm-cut-content {
 
     margin-bottom: 15px;
 
-    &.cut-highlight  {
+    &.yfm-cut-highlight {
         background-clip: content-box;
         box-shadow: 0 3px 0 7px var(--g-color-base-simple-hover);
         background-color: var(--g-color-base-simple-hover);
@@ -30,7 +30,7 @@ details.yfm-cut > .yfm-cut-content {
             z-index: 1;
             left: 0;
             top: 50%;
-            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgICA8cGF0aCBzdHJva2U9ImN1cnJlbnRDb2xvciIgZmlsbD0ibm9uZSIgZD0iTTMgNmw1IDUgNS01Ii8+Cjwvc3ZnPgo=");
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgICA8cGF0aCBzdHJva2U9ImN1cnJlbnRDb2xvciIgZmlsbD0ibm9uZSIgZD0iTTMgNmw1IDUgNS01Ii8+Cjwvc3ZnPgo=');
             transform: translateY(-50%) rotate(-90deg);
             transition: transform 0.3s ease;
             height: 20px;
