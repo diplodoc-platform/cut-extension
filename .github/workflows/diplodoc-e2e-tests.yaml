@@ -13,7 +13,7 @@ env:
 
 jobs:
   trigger-parent-e2e:
-    name: Run Diplodoc E2E Tests
+    name: Run tests
     runs-on: ubuntu-latest
 
     steps:
@@ -49,8 +49,6 @@ jobs:
           echo "Waiting for workflow to start..."
           sleep 10
 
-          # Find the workflow run by unique trigger ID
-          # This is 100% reliable even when many workflows run simultaneously
           echo "Looking for workflow run with trigger ID: $TRIGGER_ID..."
 
           MAX_ATTEMPTS=18  # 18 attempts * 5 seconds = 90 seconds max wait
@@ -58,8 +56,6 @@ jobs:
           RUN_ID=""
 
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-            # Search by trigger_id in displayTitle (100% reliable)
-            # The parent workflow uses run-name to include trigger_id in displayTitle
             RUN_ID=$(gh run list \
               --repo "$PARENT_FULL" \
               --workflow=e2e-tests.yaml \
@@ -125,7 +121,7 @@ jobs:
 
           # Get the run info for our specific run ID (if available)
           if [ -n "$RUN_ID" ]; then
-            echo "📋 Getting info for run ID: $RUN_ID"
+            echo "Getting info for run ID: $RUN_ID"
             RUN_INFO=$(gh run view "$RUN_ID" \
               --repo "$PARENT_FULL" \
               --json conclusion,url \
