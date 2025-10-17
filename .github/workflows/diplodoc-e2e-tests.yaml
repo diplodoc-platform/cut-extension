@@ -1,0 +1,48 @@
+name: Diplodoc E2E Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  trigger-parent-e2e:
+    name: 'Test in Parent Context'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get current branch name
+        id: branch
+        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - name: Trigger parent E2E workflow
+        env:
+          GH_TOKEN: ${{ secrets.YC_UI_BOT_GITHUB_TOKEN }}
+        run: |
+          gh workflow run e2e-tests.yaml \
+            --repo diplodoc-platform/diplodoc \
+            --ref master \
+            --field submodules_override="${{ steps.branch.outputs.name }}"
+
+          echo "Triggered E2E tests in parent repository"
+          echo "Branch: ${{ steps.branch.outputs.name }}"
+          echo "All submodules with this branch will be checked out to it"
+          echo ""
+          echo "View workflow runs at:"
+          echo "https://github.com/diplodoc-platform/diplodoc/actions/workflows/e2e-tests.yaml"
+
+      - name: Summary
+        run: |
+          echo "## E2E Test Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The parent monorepo E2E tests have been triggered with your branch." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ steps.branch.outputs.name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Logic:** All submodules that have this branch will checkout to it for testing" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View workflow runs →](https://github.com/diplodoc-platform/diplodoc/actions/workflows/e2e-tests.yaml)" >> $GITHUB_STEP_SUMMARY
