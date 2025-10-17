@@ -66,9 +66,9 @@ jobs:
               --workflow=e2e-tests.yaml \
               --created ">=$TRIGGER_TIME" \
               --limit 20 \
-              --json databaseId,status,displayTitle \
-              --jq --arg trigger_id "$TRIGGER_ID" \
-              'map(select(.status != "completed" and (.displayTitle | contains($trigger_id)))) | .[0].databaseId // empty')
+              --json databaseId,status,displayTitle | \
+              jq -r --arg trigger_id "$TRIGGER_ID" \
+                'map(select(.status != "completed" and (.displayTitle | contains($trigger_id)))) | .[0].databaseId // empty')
 
             if [ -n "$RUN_ID" ]; then
               echo "✅ Found workflow run by trigger ID in displayTitle"
@@ -109,7 +109,7 @@ jobs:
       - name: Summary
         if: always()
         env:
-          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+          GH_TOKEN: ${{ secrets.YC_UI_BOT_GITHUB_TOKEN }}
           BRANCH_NAME: ${{ steps.branch.outputs.name }}
           RUN_ID: ${{ steps.trigger.outputs.run_id }}
         run: |
