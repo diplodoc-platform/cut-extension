@@ -28,7 +28,7 @@ jobs:
       - name: Trigger and wait for parent E2E workflow
         id: trigger
         env:
-          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+          GH_TOKEN: ${{ secrets.YC_UI_BOT_GITHUB_TOKEN }}
           BRANCH_NAME: ${{ steps.branch.outputs.name }}
         run: |
           set -e
