@@ -1,0 +1,167 @@
+name: Diplodoc E2E Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  PARENT_OWNER: diplodoc-platform
+  PARENT_REPO: diplodoc
+
+jobs:
+  trigger-parent-e2e:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get current branch name
+        id: branch
+        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - name: Trigger and wait for parent E2E workflow
+        id: trigger
+        env:
+          GH_TOKEN: ${{ secrets.YC_UI_BOT_GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ steps.branch.outputs.name }}
+        run: |
+          set -e
+
+          PARENT_FULL="${{ env.PARENT_OWNER }}/${{ env.PARENT_REPO }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+          TRIGGER_ID="${REPO_NAME}-${{ github.run_id }}"
+
+          echo "Unique trigger ID: $TRIGGER_ID"
+
+          TRIGGER_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          gh workflow run e2e-tests.yaml \
+            --repo "$PARENT_FULL" \
+            --ref master \
+            --field submodules_override="$BRANCH_NAME" \
+            --field trigger_id="$TRIGGER_ID"
+
+          echo "Waiting for workflow to start..."
+          sleep 10
+
+          echo "Looking for workflow run with trigger ID: $TRIGGER_ID..."
+
+          MAX_ATTEMPTS=18  # 18 attempts * 5 seconds = 90 seconds max wait
+          ATTEMPT=0
+          RUN_ID=""
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            RUN_ID=$(gh run list \
+              --repo "$PARENT_FULL" \
+              --workflow=e2e-tests.yaml \
+              --created ">=$TRIGGER_TIME" \
+              --limit 20 \
+              --json databaseId,status,displayTitle | \
+              jq -r --arg trigger_id "$TRIGGER_ID" \
+                'map(select(.status != "completed" and (.displayTitle | contains($trigger_id)))) | .[0].databaseId // empty')
+
+            if [ -n "$RUN_ID" ]; then
+              echo "✅ Found workflow run by trigger ID in displayTitle"
+              echo "   Run ID: $RUN_ID"
+              break
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+              echo "   Attempt $ATTEMPT/$MAX_ATTEMPTS - workflow not found yet, waiting..."
+              sleep 5
+            fi
+          done
+
+          if [ -z "$RUN_ID" ]; then
+            echo "❌ Failed to find workflow run after $MAX_ATTEMPTS attempts"
+            echo "   Trigger ID: $TRIGGER_ID"
+            echo "   This might mean the workflow didn't start or took too long to appear"
+            exit 1
+          fi
+
+          echo "Workflow run ID: $RUN_ID"
+          echo "https://github.com/$PARENT_FULL/actions/runs/$RUN_ID"
+
+          # Save RUN_ID to outputs for use in Summary
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "Waiting for workflow to complete..."
+
+          set +e  # Temporarily disable exit on error
+          gh run watch "$RUN_ID" --repo "$PARENT_FULL" --exit-status
+          WATCH_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          if [ $WATCH_EXIT_CODE -eq 0 ]; then
+            echo "✅ E2E tests completed successfully!"
+          else
+            echo "❌ E2E tests failed!"
+          fi
+          echo ""
+          echo "View full logs:"
+          echo "https://github.com/$PARENT_FULL/actions/runs/$RUN_ID"
+
+          exit $WATCH_EXIT_CODE
+
+      - name: Summary
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.YC_UI_BOT_GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ steps.branch.outputs.name }}
+          RUN_ID: ${{ steps.trigger.outputs.run_id }}
+        run: |
+          PARENT_FULL="${{ env.PARENT_OWNER }}/${{ env.PARENT_REPO }}"
+
+          # Get the run info for our specific run ID (if available)
+          if [ -n "$RUN_ID" ]; then
+            echo "Getting info for run ID: $RUN_ID"
+            RUN_INFO=$(gh run view "$RUN_ID" \
+              --repo "$PARENT_FULL" \
+              --json conclusion,url \
+              --jq '.')
+          else
+            echo "⚠️ Run ID not available, getting latest run"
+            RUN_INFO=$(gh run list \
+              --repo "$PARENT_FULL" \
+              --workflow=e2e-tests.yaml \
+              --limit 1 \
+              --json conclusion,url \
+              --jq '.[0]')
+          fi
+
+          CONCLUSION=$(echo "$RUN_INFO" | jq -r '.conclusion')
+          RUN_URL=$(echo "$RUN_INFO" | jq -r '.url')
+
+          echo "## E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`$BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** $CONCLUSION" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+          elif [ "$CONCLUSION" = "failure" ]; then
+            echo "❌ Tests failed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔍 Debug" >> $GITHUB_STEP_SUMMARY
+            echo "Check the logs in the parent workflow for details:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Tests completed with status: $CONCLUSION" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Parent Workflow" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID:** \`$RUN_ID\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** \`$PARENT_FULL\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**[View full logs in parent repository →]($RUN_URL)**" >> $GITHUB_STEP_SUMMARY
