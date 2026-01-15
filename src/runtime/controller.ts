@@ -44,6 +44,14 @@ export class YfmCutController {
             return;
         }
 
+        let node: HTMLElement | null = cutNode;
+        while (node) {
+            if (isDetails(node)) {
+                node.open = true;
+            }
+            node = node.parentElement;
+        }
+
         setTimeout(() => {
             cutNode.classList.add(ClassNames.Highlight);
         }, 70);
@@ -54,7 +62,7 @@ export class YfmCutController {
     }
 }
 
-function isDetails(element: unknown): element is HTMLElement {
+function isDetails(element: unknown): element is HTMLDetailsElement {
     return (
         (element as HTMLElement)?.tagName?.toLowerCase() === 'details' &&
         (element as HTMLElement)?.classList.contains(ClassNames.Cut)
