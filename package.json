@@ -18,6 +18,9 @@
     "./runtime/styles.css": "./build/runtime/index.css"
   },
   "homepage": "https://diplodoc.com/",
+  "engines": {
+    "npm": ">=11.5.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/diplodoc-platform/cut-extension.git"
@@ -33,7 +36,8 @@
   "scripts": {
     "build": "run-p build:*",
     "build:js": "node ./esbuild/build.mjs",
-    "build:declarations": "tsc --emitDeclarationOnly --outDir ./build -p tsconfig.publish.json",
+    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build",
+    "build:clean": "rm -rf build",
     "test": "cd tests && npm ci && npx vitest run --config ../vitest.config.mjs",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
