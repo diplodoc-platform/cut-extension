@@ -93,7 +93,7 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
 
     try {
         md.core.ruler.before('curly_attributes', 'cut', rule);
-    } catch (e) {
+    } catch {
         md.core.ruler.push('cut', rule);
     }
 };
