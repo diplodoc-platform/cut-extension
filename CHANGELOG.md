@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.1](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.0...v1.1.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* **cut-extension:** exclude build and tests from typecheck ([4d80a33](https://github.com/diplodoc-platform/cut-extension/commit/4d80a33f37ef8e3432df3e1a8f1b6ba9dccfb590))
+* Fix cut expanding on focus ([1780ac6](https://github.com/diplodoc-platform/cut-extension/commit/1780ac6a1d172148081748d71a2d19801c9f2b97))
+* Remove useless workflows ([95b28ea](https://github.com/diplodoc-platform/cut-extension/commit/95b28eab513e849e01527d03817262ed0661aa98))
+* Remove useless workflows ([8e3abb8](https://github.com/diplodoc-platform/cut-extension/commit/8e3abb8e245db2d48e715ddcf02d75bf744b03fd))
+
 ## [1.1.0](https://github.com/diplodoc-platform/cut-extension/compare/v1.0.0...v1.1.0) (2025-08-28)
 
 
