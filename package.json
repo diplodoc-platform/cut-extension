@@ -47,7 +47,7 @@
     "@diplodoc/utils": "^2.0.1"
   },
   "devDependencies": {
-    "@diplodoc/lint": "^1.2.0",
+    "@diplodoc/lint": "^1.9.2",
     "@diplodoc/tsconfig": "^1.0.2",
     "@types/markdown-it": "^13.0.9",
     "esbuild": "^0.27.2",
