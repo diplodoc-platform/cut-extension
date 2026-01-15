@@ -2,7 +2,10 @@ import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
     test: {
-        include: ['tests/src/**/*.test.ts', 'tests/src/**/*.spec.ts'],
+        // Paths are relative to the working directory where vitest is run
+        // When running from tests/ directory, use 'src/**/*.test.ts'
+        // When running from project root, use 'tests/src/**/*.test.ts'
+        include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
         exclude: ['node_modules', 'build'],
         environment: 'jsdom',
         globals: true,
