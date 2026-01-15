@@ -1,3 +1,4 @@
+import {describe, expect, it} from 'vitest';
 import transform from '@diplodoc/transform';
 import dd from 'ts-dedent';
 import MarkdownIt from 'markdown-it';
