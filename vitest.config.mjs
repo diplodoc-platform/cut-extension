@@ -1,6 +1,5 @@
 import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-
 import {coverageConfigDefaults, defineConfig} from 'vitest/config';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -16,7 +15,6 @@ export default defineConfig({
         globals: false,
         include: ['test/**/*.test.ts', 'test/**/*.spec.ts'],
         exclude: ['**/node_modules/**', 'build', 'dist', 'coverage'],
-        environment: 'jsdom',
         snapshotFormat: {
             escapeString: true,
             printBasicPrototype: false,
