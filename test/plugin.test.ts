@@ -1,25 +1,20 @@
 import {describe, expect, it} from 'vitest';
-import transform from '@diplodoc/transform';
-import dd from 'ts-dedent';
 import MarkdownIt from 'markdown-it';
+import dd from 'ts-dedent';
 
-import * as cutExtension from '../../src/plugin';
+import * as cutExtension from '../src/plugin';
 
-const html = (text: string, opts?: cutExtension.TransformOptions) => {
-    const {result} = transform(text, {
-        plugins: [cutExtension.transform({bundle: false, ...opts})],
-    });
+function render(text: string, opts?: cutExtension.TransformOptions) {
+    const md = new MarkdownIt();
+    md.use(cutExtension.transform({bundle: false, ...opts}));
+    const env: {meta?: {script?: string[]; style?: string[]}} = {};
+    const html = md.render(text, env);
+    return {html, meta: env.meta};
+}
 
-    return result.html;
-};
+const html = (text: string, opts?: cutExtension.TransformOptions) => render(text, opts).html;
 
-const meta = (text: string, opts?: cutExtension.TransformOptions) => {
-    const {result} = transform(text, {
-        plugins: [cutExtension.transform({bundle: false, ...opts})],
-    });
-
-    return result.meta;
-};
+const meta = (text: string, opts?: cutExtension.TransformOptions) => render(text, opts).meta;
 
 const parse = (text: string, opts?: cutExtension.TransformOptions) => {
     const md = new MarkdownIt().use(cutExtension.transform({bundle: false, ...opts}));

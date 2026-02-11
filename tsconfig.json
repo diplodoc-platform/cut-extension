@@ -3,8 +3,9 @@
   "compilerOptions": {
     "target": "es2022",
     "module": "es2022",
-    "declaration": true
+    "declaration": true,
+    "paths": {"@diplodoc/cut-extension": ["./src"]}
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "build", "tests"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "build"]
 }

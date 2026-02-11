@@ -1,22 +1,31 @@
-import {defineConfig} from 'vitest/config';
+import {dirname, join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+import {coverageConfigDefaults, defineConfig} from 'vitest/config';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+    root: __dirname,
+    resolve: {
+        alias: {
+            '@diplodoc/cut-extension': join(__dirname, 'src'),
+        },
+    },
     test: {
-        // Paths are relative to the working directory where vitest is run
-        // When running from tests/ directory, use 'src/**/*.test.ts'
-        // When running from project root, use 'tests/src/**/*.test.ts'
-        include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
-        exclude: ['node_modules', 'build'],
+        globals: false,
+        include: ['test/**/*.test.ts', 'test/**/*.spec.ts'],
+        exclude: ['**/node_modules/**', 'build', 'dist', 'coverage'],
         environment: 'jsdom',
-        globals: true,
         snapshotFormat: {
             escapeString: true,
             printBasicPrototype: false,
         },
         coverage: {
-            enabled: false,
-            // Coverage is disabled because tests are in separate directory
-            // Enable if needed: provider: 'v8', include: ['src'], exclude: ['src/**/*.test.ts']
+            provider: 'v8',
+            include: ['src/**'],
+            exclude: ['test/**', ...coverageConfigDefaults.exclude],
+            reporter: ['text', 'json', 'html', 'lcov'],
         },
     },
 });

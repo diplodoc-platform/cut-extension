@@ -12,9 +12,9 @@ exports[`Cut extension - plugin > Options: directiveSyntax > should render both 
 `;
 
 exports[`Cut extension - plugin > Options: directiveSyntax > should render only new (directive) cut 1`] = `
-"<p></p>
+"<p>{% cut &quot;Old cut&quot; %}</p>
 <p>Old cut content</p>
-<p></p>
+<p>{% endcut %}</p>
 <details class=\\"yfm-cut\\">
 <summary class=\\"yfm-cut-title\\">Directive cut</summary>
 <div class=\\"yfm-cut-content\\">
@@ -26,8 +26,8 @@ exports[`Cut extension - plugin > Options: directiveSyntax > should render only 
 
 exports[`Cut extension - plugin > Options: directiveSyntax > should render only old (curly) cut 1`] = `
 "<details class=\\"yfm-cut\\"><summary class=\\"yfm-cut-title\\">Old cut</summary><div class=\\"yfm-cut-content\\"><p>Old cut content</p>
-</div></details><p>:::cut[Directive cut]<br />
-Directive cut content<br />
+</div></details><p>:::cut[Directive cut]
+Directive cut content
 :::</p>
 "
 `;
@@ -340,7 +340,7 @@ exports[`Cut extension - plugin > curly syntax > should render simple cut 1`] = 
 `;
 
 exports[`Cut extension - plugin > curly syntax > should render simple cut with code in it 1`] = `
-"<details class=\\"yfm-cut\\"><summary class=\\"yfm-cut-title\\">Cut title</summary><div class=\\"yfm-cut-content\\"><pre><code class=\\"hljs\\">Code
+"<details class=\\"yfm-cut\\"><summary class=\\"yfm-cut-title\\">Cut title</summary><div class=\\"yfm-cut-content\\"><pre><code>Code
 </code></pre>
 </div></details>"
 `;

@@ -53,9 +53,9 @@ This file contains instructions for AI agents working with the `@diplodoc/cut-ex
     - `const.ts` — runtime constants
     - `styles/` — SCSS styles
       - `cut.scss` — cut component styles
-- `tests/` — test suite
-  - `src/plugin.test.ts` — plugin tests
-  - `jest.config.js` — Jest configuration
+- `test/` — test suite
+  - `plugin.test.ts` — plugin tests
+  - `__snapshots__/` — Vitest snapshots
 - `build/` — compiled output (generated)
   - `plugin/` — compiled plugin code
   - `runtime/` — compiled runtime code
@@ -78,7 +78,7 @@ This package follows the standard Diplodoc platform tech stack. See `.agents/dev
 
 - **Language**: TypeScript
 - **Build**: esbuild for bundling, tsc for type declarations
-- **Testing**: Jest
+- **Testing**: Vitest
 - **Styling**: SCSS (compiled to CSS)
 - **Dependencies**:
   - `@diplodoc/directive` — directive parsing utilities
@@ -190,27 +190,20 @@ The package exports:
 
 ## Testing
 
-The package uses **Jest** for testing:
+The package uses **Vitest** for testing:
 
-- Configuration: `tests/jest.config.js`
-- Test files: `tests/src/**/*.test.ts`
-- Snapshots: `tests/src/__snapshots__/`
+- Configuration: `vitest.config.mjs` at package root
+- Test files: `test/**/*.test.ts`
+- Snapshots: `test/__snapshots__/`
+- Tests run against source; no dependency on `@diplodoc/transform` (MarkdownIt + cut plugin only)
 
 **Test Commands**:
 
 ```bash
-# Run tests
-npm test
-
-# Run tests in watch mode (if configured)
-npm test -- --watch
+npm test           # run once
+npm run test:watch # watch mode
+npm run test:coverage
 ```
-
-**Test Structure**:
-
-- Tests are in a separate `tests/` directory with their own `package.json`
-- This allows testing the built package as it would be used by consumers
-- Tests import from the built output in `build/`
 
 ## Linting and Code Quality
 
