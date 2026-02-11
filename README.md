@@ -1,4 +1,9 @@
 [![NPM version](https://img.shields.io/npm/v/@diplodoc/cut-extension.svg?style=flat)](https://www.npmjs.org/package/@diplodoc/cut-extension)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=diplodoc-platform_cut-extension&metric=alert_status)](https://sonarcloud.io/summary/overall?id=diplodoc-platform_cut-extension)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=diplodoc-platform_cut-extension&metric=coverage)](https://sonarcloud.io/summary/overall?id=diplodoc-platform_cut-extension)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=diplodoc-platform_cut-extension&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=diplodoc-platform_cut-extension)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=diplodoc-platform_cut-extension&metric=reliability_rating)](https://sonarcloud.io/summary/overall?id=diplodoc-platform_cut-extension)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=diplodoc-platform_cut-extension&metric=security_rating)](https://sonarcloud.io/summary/overall?id=diplodoc-platform_cut-extension)
 
 # @diplodoc/cut-extension
 
