@@ -42,10 +42,10 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build",
-    "lint": "lint update && lint",
-    "lint:fix": "lint update && lint fix",
-    "pre-commit": "lint update && lint-staged",
-    "prepare": "husky",
+    "lint": "lint",
+    "lint:fix": "lint fix",
+    "pre-commit": "lint-staged",
+    "prepare": "husky || true",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
@@ -54,7 +54,6 @@
     "@diplodoc/utils": "^2.0.1"
   },
   "devDependencies": {
-    "@diplodoc/lint": "^1.14.1",
     "@diplodoc/tsconfig": "^1.0.2",
     "@types/markdown-it": "^13.0.9",
     "@vitest/coverage-v8": "^3.2.4",
@@ -62,6 +61,7 @@
     "npm-run-all": "^4.1.5",
     "ts-dedent": "^2.2.0",
     "typescript": "^5.5.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "@diplodoc/infra": "1.0.0"
   }
 }
