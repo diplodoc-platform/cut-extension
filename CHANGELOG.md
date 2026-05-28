@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.1...v1.1.2) (2026-05-28)
+
+
+### Bug Fixes
+
+* **cut-extension:** correct vitest config paths for tests directory ([83cfbd2](https://github.com/diplodoc-platform/cut-extension/commit/83cfbd20b2bd3424d895271fb5d521b27a7d88e7))
+* **deps:** updated node to 24 ([#64](https://github.com/diplodoc-platform/cut-extension/issues/64)) ([549e93c](https://github.com/diplodoc-platform/cut-extension/commit/549e93cd93b8b6bf000e41cb45bebbe03d472c0c))
+
 ## [1.1.1](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.0...v1.1.1) (2026-01-15)
 
 
