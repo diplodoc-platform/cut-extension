@@ -9,23 +9,42 @@ export class YfmCutController {
 
     init() {
         let mouseEvent = false;
+        // Summary whose browser-restored focus we ignore once after a blur.
+        let summaryAtBlur: EventTarget | null = null;
         const keepMouse = () => {
             mouseEvent = true;
+            // A click is a deliberate action: drop any pending suppression.
+            summaryAtBlur = null;
         };
         const amendMouse = () => {
             mouseEvent = false;
         };
+        const onWindowBlur = () => {
+            // On window re-focus the browser restores focus to whatever was
+            // active here, so read it straight off `document.activeElement`.
+            const active = document.activeElement;
+            summaryAtBlur = isSummary(active) ? active : null;
+        };
         const onFocus = (event: Event) => {
+            // Suppress one restored focus; any other focus disarms it first.
+            const restored = event.target === summaryAtBlur;
+            summaryAtBlur = null;
+            if (restored) {
+                return;
+            }
+
             if (isSummary(event.target) && !mouseEvent) {
                 this.focusActiveCut(event.target);
             }
         };
 
+        window.addEventListener('blur', onWindowBlur);
         document.addEventListener('mousedown', keepMouse);
         document.addEventListener('mouseup', amendMouse);
         document.addEventListener('focus', onFocus, true);
 
         return () => {
+            window.removeEventListener('blur', onWindowBlur);
             document.removeEventListener('mousedown', keepMouse);
             document.removeEventListener('mouseup', amendMouse);
             document.removeEventListener('focus', onFocus, true);
