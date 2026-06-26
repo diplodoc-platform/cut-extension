@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.3...v1.1.4) (2026-06-26)
+
+
+### Bug Fixes
+
+* prevent collapsed cut from re-opening on tab refocus ([#69](https://github.com/diplodoc-platform/cut-extension/issues/69)) ([85db2b3](https://github.com/diplodoc-platform/cut-extension/commit/85db2b37076401c3bd24b36eaabff133c0a046d9))
+
 ## [1.1.3](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.2...v1.1.3) (2026-05-28)
 
 
