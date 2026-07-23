@@ -45,38 +45,6 @@ export function getRuntime(runtime: RawRuntime) {
     }
 }
 
-declare const __dirname: string;
-export function copyRuntime(
-    {runtime, output}: {runtime: Runtime; output: string},
-    cache: Set<string>,
-) {
-    if (!runtime) {
-        return;
-    }
-
-    const PATH_TO_RUNTIME = '../runtime';
-    const {join, resolve} = dynrequire('node:path');
-    const runtimeFiles = {
-        'index.js': runtime.script,
-        'index.css': runtime.style,
-    };
-    for (const [originFile, outputFile] of Object.entries(runtimeFiles)) {
-        const file = join(PATH_TO_RUNTIME, originFile);
-        if (!cache.has(file)) {
-            cache.add(file);
-            copy(resolve(__dirname, file), join(output, outputFile));
-        }
-    }
-}
-
-export function copy(from: string, to: string) {
-    const {mkdirSync, copyFileSync} = dynrequire('node:fs');
-    const {dirname} = dynrequire('node:path');
-
-    mkdirSync(dirname(to), {recursive: true});
-    copyFileSync(from, to);
-}
-
 /*
  * Runtime require hidden for builders.
  * Used for nodejs api
