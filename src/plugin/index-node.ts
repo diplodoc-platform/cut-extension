@@ -12,7 +12,6 @@ export const transform: typeof baseTransform = (options = {}) => {
     return baseTransform({onBundle, ...options});
 };
 
-declare const __dirname: string;
 function copyRuntime({runtime, output}: {runtime: Runtime; output: string}, cache: Set<string>) {
     if (!runtime) {
         return;
