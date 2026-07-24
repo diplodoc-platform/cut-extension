@@ -2,7 +2,7 @@ import type MarkdownIt from 'markdown-it';
 import type {RawRuntime, Runtime} from './utils';
 
 import {cutPlugin} from './plugin';
-import {copyRuntime, dynrequire, getRuntime, hidden} from './utils';
+import {dynrequire, getRuntime, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 import {cutDirective} from './directive';
 
@@ -19,6 +19,8 @@ export type TransformOptions = {
      * @default 'disabled'
      */
     directiveSyntax?: 'disabled' | 'enabled' | 'only';
+    /** @internal */
+    onBundle?: (args: {runtime: Runtime; output: string}, cache: Set<string>) => void;
 };
 
 type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'directiveSyntax'> & {
@@ -31,9 +33,10 @@ const registerTransform = (
     {
         runtime,
         bundle,
+        onBundle,
         output,
         directiveSyntax,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'directiveSyntax'> & {
+    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'directiveSyntax' | 'onBundle'> & {
         output: string;
     },
 ) => {
@@ -53,8 +56,8 @@ const registerTransform = (
             env.meta.style = env.meta.style || [];
             env.meta.style.push(runtime.style);
 
-            if (bundle) {
-                copyRuntime({runtime, output}, env.bundled);
+            if (bundle && onBundle) {
+                onBundle({runtime, output}, env.bundled);
             }
         }
     });
@@ -82,6 +85,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
             directiveSyntax,
             runtime,
             bundle,
+            onBundle: options.onBundle,
             output,
         });
     };
@@ -94,6 +98,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
                     directiveSyntax,
                     runtime,
                     bundle,
+                    onBundle: options.onBundle,
                     output: destRoot,
                 });
             });

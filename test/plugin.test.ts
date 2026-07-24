@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import MarkdownIt from 'markdown-it';
 import dd from 'ts-dedent';
 
@@ -345,6 +345,41 @@ describe('Cut extension - plugin', () => {
 
         it('should render both cuts', () => {
             expect(html(markup, {directiveSyntax: 'enabled'})).toMatchSnapshot();
+        });
+    });
+
+    describe('bundle / onBundle', () => {
+        const CUT = dd`
+            {% cut "title" %}
+
+            content
+
+            {% endcut %}
+        `;
+
+        it('calls onBundle with runtime paths when bundle is enabled', () => {
+            const onBundle = vi.fn();
+
+            render(CUT, {bundle: true, onBundle});
+
+            expect(onBundle).toHaveBeenCalledWith(
+                {
+                    runtime: {
+                        script: '_assets/cut-extension.js',
+                        style: '_assets/cut-extension.css',
+                    },
+                    output: '.',
+                },
+                expect.any(Set),
+            );
+        });
+
+        it('does not call onBundle when bundle is disabled', () => {
+            const onBundle = vi.fn();
+
+            render(CUT, {bundle: false, onBundle});
+
+            expect(onBundle).not.toHaveBeenCalled();
         });
     });
 });

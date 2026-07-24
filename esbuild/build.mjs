@@ -24,6 +24,15 @@ const plugin = {
 };
 
 /** @type {import('esbuild').BuildOptions}*/
+const pluginNode = {
+    ...common,
+    entryPoints: ['src/plugin/index-node.ts'],
+    outfile: outDir + '/plugin/index-node.js',
+    platform: 'node',
+    packages: 'external',
+};
+
+/** @type {import('esbuild').BuildOptions}*/
 const runtime = {
     ...common,
     entryPoints: ['src/runtime/index.ts'],
@@ -34,4 +43,5 @@ const runtime = {
 };
 
 build(plugin);
+build(pluginNode);
 build(runtime);
