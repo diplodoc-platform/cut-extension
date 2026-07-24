@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.5...v1.1.6) (2026-07-24)
+
+
+### Bug Fixes
+
+* skip warn ([#84](https://github.com/diplodoc-platform/cut-extension/issues/84)) ([b31d66f](https://github.com/diplodoc-platform/cut-extension/commit/b31d66f90779af28953d478fc5777e59b4633e99))
+
 ## [1.1.5](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.4...v1.1.5) (2026-07-21)
 
 
