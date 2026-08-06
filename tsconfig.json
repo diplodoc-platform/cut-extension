@@ -4,7 +4,10 @@
     "target": "es2022",
     "module": "es2022",
     "declaration": true,
-    "paths": {"@diplodoc/cut-extension": ["./src"]}
+    "paths": {
+      "@diplodoc/cut-extension": ["./src"]
+    },
+    "moduleResolution": "bundler"
   },
   "include": ["src", "test"],
   "exclude": ["node_modules", "build"]
