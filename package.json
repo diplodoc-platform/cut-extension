@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@diplodoc/directive": "^0.3.6",
-    "@diplodoc/utils": "^2.3.5"
+    "@diplodoc/utils": "^2.3.6"
   },
   "devDependencies": {
     "@diplodoc/infra": "2.2.3",
