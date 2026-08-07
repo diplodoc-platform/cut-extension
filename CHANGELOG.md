@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.7](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.6...v1.1.7) (2026-08-07)
+
+
+### Bug Fixes
+
+* exclude build:clean from the parallel build glob ([#86](https://github.com/diplodoc-platform/cut-extension/issues/86)) ([9b0fc5f](https://github.com/diplodoc-platform/cut-extension/commit/9b0fc5f4b80b42378fd745766d247cb8278a647a))
+* Upgrade typescript to 5.9.3 DOCSTOOLS-6357 ([8baa6e2](https://github.com/diplodoc-platform/cut-extension/commit/8baa6e29654209e90580454ab6fc7adfb11288e4))
+* Upgrade typescript to 6.0.3 DOCSTOOLS-6359 ([b7c99ce](https://github.com/diplodoc-platform/cut-extension/commit/b7c99ce82f0ec6f3f670d08c8ee703b0b82df971))
+
 ## [1.1.6](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.5...v1.1.6) (2026-07-24)
 
 
