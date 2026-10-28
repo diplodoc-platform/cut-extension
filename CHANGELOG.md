@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.8](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.7...v1.1.8) (2026-10-28)
+
+
+### Bug Fixes
+
+* **deps:** Update @diplodoc/directive@0.4.0 ([01102ba](https://github.com/diplodoc-platform/cut-extension/commit/01102bae9f86bb9493ffd58385c2ef9a8c122054))
+
 ## [1.1.7](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.6...v1.1.7) (2026-08-07)
 
 
