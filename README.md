@@ -94,7 +94,60 @@ Options:
   Where target directory is `<transformer output option>/<plugin runtime option>`<br>
   Default: `true`<br>
 
+### Directive syntax
+
+The standalone plugin keeps `directiveSyntax: 'disabled'` by default. Use
+`'enabled'` to accept both legacy cuts and container directives, or `'only'`
+to accept only the directive syntax:
+
+```js
+cutExtension.transform({
+  bundle: false,
+  directiveSyntax: 'enabled',
+  onDiagnostic: ({line, reason}) => console.warn(`Line ${line}: ${reason}`),
+});
+```
+
+```text
+:::cut [Title with **Markdown**] {id="details" class="extra" open=true name="group"}
+Cut content
+:::
+```
+
+The title is optional; an absent or empty title retains the existing directive
+behavior. The ID is applied to the summary, classes are appended to the cut,
+`open=false` leaves the cut closed, and `name` groups cuts. Repeated classes
+are combined. Unknown attributes, repeated scalar attributes, unsupported
+destinations, malformed groups and values other than `true` or `false` for
+`open` are rejected. The optional callback reports a one-based line and reason
+for invalid parameters recognized by the directive parser.
+
+Rejected blocks fall back to ordinary Markdown parsing. An independently valid
+nested directive may still be parsed in that fallback. A previously registered
+block directive named `cut` causes an error when directive syntax is installed;
+it is not replaced.
+
 ## Development
+
+### Pure plugin and legacy boundary recognition
+
+`@diplodoc/cut-extension/plugin` exports the existing pure `transform` factory
+and `recognizeCutBoundary(tokens, index)`. This explicit entry does not select
+the Node filesystem-copy wrapper. Use `bundle: false` when the host owns assets.
+
+The recognizer uses the same legacy opener and closer predicates as rendering.
+Call it on original native block tokens before semantic replacement. An opening
+snapshot contains the authored Markdown `title` and unchanged `rawAttributes`;
+both edges contain `raw` inline content and a copied, readonly normalized line
+`map`. An unclosed opener is still returned. Unrecognized syntax returns
+`undefined`.
+
+This is an edge classifier, not a pair validator or a source migrator. It does
+not allocate IDs, parse attributes, mutate tokens or report runtime diagnostics.
+The caller must prove original UTF-16 ranges, preserve Markdown container
+prefixes, and reject unsafe or unsupported conversion. Legacy recognition is
+permissive, including historical quote forms; recognition alone does not make
+a form eligible for conversion.
 
 ### Setup
 
@@ -107,6 +160,9 @@ npm run build
 
 # Run tests
 npm test
+
+# Build, pack, and verify isolated native Markdown-it consumers
+npm run test:package
 
 # Type check
 npm run typecheck
