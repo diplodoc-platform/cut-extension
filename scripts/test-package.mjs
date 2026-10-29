@@ -14,6 +14,7 @@ import {createRequire} from 'node:module';
 import {tmpdir} from 'node:os';
 import {dirname, join, relative, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {buildSync} from '@diplodoc/infra/esbuild';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRequire = createRequire(join(root, 'package.json'));
@@ -51,7 +52,25 @@ writeFileSync(
 
 const typeBody = `
 import {transform, type TransformOptions} from '@diplodoc/cut-extension';
+import {transform as pureTransform, recognizeCutBoundary, type CutBoundary} from '@diplodoc/cut-extension/plugin';
 import '@diplodoc/cut-extension/runtime';
+const original = new MarkdownIt().parse('{% cut "Title" %}', {});
+const boundary: CutBoundary | undefined = recognizeCutBoundary(original, 0);
+if (boundary?.kind !== 'open' || boundary.title !== 'Title') throw new Error('Cut boundary');
+new MarkdownIt().use(pureTransform({bundle:false, runtime:false}));
+function checkReadonly(value: CutBoundary) {
+    // @ts-expect-error Snapshots are readonly.
+    value.raw = 'changed';
+    if (value.map) {
+        // @ts-expect-error Snapshot map entries are readonly.
+        value.map[0] = 42;
+    }
+    if (value.kind === 'close') {
+        // @ts-expect-error Only opening edges have an authored title.
+        value.title;
+    }
+}
+void checkReadonly;
 const options: TransformOptions = {bundle: false, directiveSyntax: 'enabled', onDiagnostic: ({line, reason}) => {
     const validLine: number = line;
     const validReason: string = reason;
@@ -237,6 +256,28 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         );
     }
     assert.equal(consumerRequire('markdown-it/package.json').version, host.version);
+    const pure = buildSync({
+        stdin: {
+            contents:
+                "import {transform, recognizeCutBoundary} from '@diplodoc/cut-extension/plugin'; globalThis.cut = transform; globalThis.recognize = recognizeCutBoundary;",
+            resolveDir: dir,
+        },
+        bundle: true,
+        platform: 'browser',
+        format: 'esm',
+        metafile: true,
+        write: false,
+        logLevel: 'silent',
+    });
+    assert(
+        Object.values(pure.metafile.outputs).every((output) => output.imports.length === 0),
+        'The explicit pure entry must bundle without Node imports',
+    );
+    assert(
+        Object.keys(pure.metafile.inputs).every((input) => !/index-node|utilsFS/.test(input)),
+        'The explicit pure entry must exclude filesystem wrappers',
+    );
+    writeFileSync(join(report, `native${id}-pure-graph.json`), JSON.stringify(pure.metafile));
     if (id === '13') {
         assert(
             realpathSync(consumerRequire.resolve('markdown-it-transform15')).startsWith(modules),

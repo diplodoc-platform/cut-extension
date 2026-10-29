@@ -129,6 +129,26 @@ it is not replaced.
 
 ## Development
 
+### Pure plugin and legacy boundary recognition
+
+`@diplodoc/cut-extension/plugin` exports the existing pure `transform` factory
+and `recognizeCutBoundary(tokens, index)`. This explicit entry does not select
+the Node filesystem-copy wrapper. Use `bundle: false` when the host owns assets.
+
+The recognizer uses the same legacy opener and closer predicates as rendering.
+Call it on original native block tokens before semantic replacement. An opening
+snapshot contains the authored Markdown `title` and unchanged `rawAttributes`;
+both edges contain `raw` inline content and a copied, readonly normalized line
+`map`. An unclosed opener is still returned. Unrecognized syntax returns
+`undefined`.
+
+This is an edge classifier, not a pair validator or a source migrator. It does
+not allocate IDs, parse attributes, mutate tokens or report runtime diagnostics.
+The caller must prove original UTF-16 ranges, preserve Markdown container
+prefixes, and reject unsafe or unsupported conversion. Legacy recognition is
+permissive, including historical quote forms; recognition alone does not make
+a form eligible for conversion.
+
 ### Setup
 
 ```bash
