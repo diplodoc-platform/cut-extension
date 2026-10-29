@@ -141,6 +141,9 @@ npm run build
 # Run tests
 npm test
 
+# Build, pack, and verify isolated native Markdown-it consumers
+npm run test:package
+
 # Type check
 npm run typecheck
 

@@ -41,6 +41,7 @@
     "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build && node scripts/fix-runtime-declarations.mjs",
     "build:clean": "rm -rf build",
     "test": "vitest run",
+    "test:package": "node scripts/test-package.mjs",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build",
     "lint": "lint",
