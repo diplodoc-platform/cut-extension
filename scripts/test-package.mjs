@@ -58,11 +58,31 @@ const options: TransformOptions = {bundle: false, directiveSyntax: 'enabled', on
 }};
 const md = new MarkdownIt().use(transform(options));
 void md.render(':::cut [Title]\\nBody\\n:::');
+const plugin = transform(options);
+const collected: void = plugin.collect(':::cut [Title]\\nBody\\n:::', {destRoot: 'out'});
+void collected;
+// @ts-expect-error The input must be a string.
+plugin.collect(42, {destRoot: 'out'});
+// @ts-expect-error The options argument is required.
+plugin.collect('input');
+// @ts-expect-error destRoot must be a string.
+plugin.collect('input', {destRoot: 42});
 // @ts-expect-error Unknown directive modes are rejected.
 const invalidMode: TransformOptions = {directiveSyntax: 'invalid'};
 void invalidMode;
 `;
 const runtimeBody = `
+const bundles = [];
+const collector = transform({directiveSyntax: 'enabled', onBundle: (args) => bundles.push(args)});
+const descriptor = Object.getOwnPropertyDescriptor(collector, 'collect');
+assert.equal(typeof collector, 'function');
+assert.equal(descriptor.value, collector.collect);
+assert.deepEqual({writable: descriptor.writable, enumerable: descriptor.enumerable, configurable: descriptor.configurable}, {writable: true, enumerable: true, configurable: true});
+const collect = collector.collect;
+assert.equal(collect(':::cut [Title]\\nBody\\n:::', {destRoot: 'out'}), undefined);
+assert.equal(collector.collect, collect);
+assert.equal(bundles.length, 1);
+assert.equal(bundles[0].output, 'out');
 const diagnostics = [];
 const options = {bundle: false, directiveSyntax: 'enabled', onDiagnostic: (item) => diagnostics.push(item)};
 const md = new MarkdownIt().use(transform(options));

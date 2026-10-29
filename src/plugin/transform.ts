@@ -99,7 +99,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
         });
     };
 
-    Object.assign(plugin, {
+    return Object.assign(plugin, {
         collect(input: string, {destRoot = '.'}: InputOptions) {
             const MdIt = dynrequire('markdown-it');
             const md = new MdIt().use((md: MarkdownIt) => {
@@ -116,6 +116,4 @@ export function transform(options: Partial<TransformOptions> = {}) {
             md.parse(input, {});
         },
     });
-
-    return plugin;
 }
