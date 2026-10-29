@@ -1,4 +1,9 @@
-import type {MarkdownIt} from './markdown-it';
+import type {
+    BlockContentState,
+    DirectiveBlockState,
+    DirectiveInlineState,
+} from '@diplodoc/directive';
+import type {CutCoreState, CutHost, CutToken, MarkdownIt} from './markdown-it';
 import type {RawRuntime, Runtime} from './utils';
 
 import {cutPlugin} from './plugin';
@@ -32,8 +37,13 @@ type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'directiveSynt
     directiveSyntax: NonNullable<TransformOptions['directiveSyntax']>;
 };
 
-const registerTransform = (
-    md: MarkdownIt,
+const registerTransform = <
+    T extends CutToken,
+    C extends CutCoreState<T>,
+    B extends DirectiveBlockState & BlockContentState<B>,
+    I extends DirectiveInlineState,
+>(
+    md: CutHost<T, C, B, I>,
     {
         runtime,
         bundle,
@@ -55,7 +65,7 @@ const registerTransform = (
         md.use(cutDirective(onDiagnostic));
     }
     md.core.ruler.push('yfm_cut_after', ({env}) => {
-        hidden(env, 'bundled', new Set<string>());
+        const bundledEnv = hidden(env, 'bundled', new Set<string>());
 
         if (env?.[ENV_FLAG_NAME] && runtime) {
             env.meta = env.meta || {};
@@ -65,7 +75,7 @@ const registerTransform = (
             env.meta.style.push(runtime.style);
 
             if (bundle && onBundle) {
-                onBundle({runtime, output}, env.bundled);
+                onBundle({runtime, output}, bundledEnv.bundled);
             }
         }
     });
@@ -85,10 +95,12 @@ export function transform(options: Partial<TransformOptions> = {}) {
     const directiveSyntax = options.directiveSyntax || 'disabled';
     const runtime: Runtime = getRuntime(options.runtime);
 
-    const plugin: (md: MarkdownIt, options?: {output?: string}) => void = function (
-        md: MarkdownIt,
-        {output = '.'} = {},
-    ) {
+    const plugin = function <
+        T extends CutToken,
+        C extends CutCoreState<T>,
+        B extends DirectiveBlockState & BlockContentState<B>,
+        I extends DirectiveInlineState,
+    >(md: CutHost<T, C, B, I>, {output = '.'} = {}) {
         registerTransform(md, {
             directiveSyntax,
             onDiagnostic: options.onDiagnostic,

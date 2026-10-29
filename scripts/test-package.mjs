@@ -22,6 +22,7 @@ assert(npmCli, 'Run this check through npm run test:package.');
 const tmp = mkdtempSync(join(tmpdir(), 'cut-package-'));
 const report = resolve(process.env.CUT_PACKAGE_REPORT_DIR || tmp);
 const hosts = [
+    {version: '12.3.2', types: '12.2.3'},
     {version: '13.0.2', types: '13.0.9'},
     {version: '14.1.0', types: '14.1.0'},
     {version: '15.0.3'},
@@ -83,6 +84,33 @@ assert.equal(collect(':::cut [Title]\\nBody\\n:::', {destRoot: 'out'}), undefine
 assert.equal(collector.collect, collect);
 assert.equal(bundles.length, 1);
 assert.equal(bundles[0].output, 'out');
+const numeric = new MarkdownIt().use(transform({bundle: false}));
+numeric.core.ruler.before('cut', 'numeric-token-attrs', (state) => {
+    const OriginalToken = state.Token;
+    state.Token = class extends OriginalToken {
+        constructor(...args) {
+            super(...args);
+            if (this.type === 'yfm_cut_open') this.attrSet('data-num', 42);
+        }
+    };
+});
+assert.match(numeric.render('{% cut "Title" %}{data-num=plus}\\n\\nBody\\n\\n{% endcut %}'), /data-num="42 plus"/);
+for (const [id, expected] of [[42, '42'], [0, null], ['', null], ['0', '0']]) {
+    const seeded = new MarkdownIt().use(transform({bundle: false}));
+    seeded.core.ruler.before('cut', 'seed-id', (state) => {
+        const OriginalToken = state.Token;
+        state.Token = class extends OriginalToken {
+            constructor(...args) {
+                super(...args);
+                if (this.type === 'yfm_cut_open') this.attrSet('id', id);
+            }
+        };
+    });
+    const html = seeded.render('{% cut "Title" %}\\n\\nBody\\n\\n{% endcut %}');
+    const summary = html.match(/<summary[^>]*>/)[0];
+    if (expected === null) assert.doesNotMatch(summary, / id=/);
+    else assert.match(summary, new RegExp(' id="' + expected + '"'));
+}
 const diagnostics = [];
 const options = {bundle: false, directiveSyntax: 'enabled', onDiagnostic: (item) => diagnostics.push(item)};
 const md = new MarkdownIt().use(transform(options));
@@ -96,6 +124,15 @@ for (const html of [oldHtml, newHtml]) {
 }
 assert.equal(env.meta.script.length, 1);
 assert.equal(env.meta.style.length, 1);
+const directiveInput = ':::cut [Title]\\nBody\\n:::';
+const readonlyFlag = Object.defineProperty({}, 'has-yfm-cut', {value: false, writable: false});
+assert.throws(() => md.render(directiveInput, readonlyFlag), TypeError);
+const sentinel = new Error('setter failed');
+const throwingFlag = Object.defineProperty({}, 'has-yfm-cut', {set() {throw sentinel;}});
+assert.throws(() => md.render(directiveInput, throwingFlag), (error) => error === sentinel);
+const functionEnv = function () {};
+assert.match(md.render(directiveInput, functionEnv), /<details/);
+assert.equal(functionEnv['has-yfm-cut'], true);
 assert.match(md.render(':::cut {constructor=x}\\nBody\\n:::', {}), /:::cut/);
 assert.equal(diagnostics.length, 1);
 assert.equal(diagnostics[0].line, 1);
@@ -116,6 +153,8 @@ for (const host of hosts) {
         typescript: sourceRequire('typescript/package.json').version,
     };
     if (host.types) dependencies['@types/markdown-it'] = host.types;
+    if (id === '12') dependencies['@types/linkify-it'] = '3.0.5';
+    if (id === '13') dependencies['markdown-it-transform15'] = 'npm:markdown-it@15.0.3';
     if (id === '14') dependencies.mdurl = '2.0.0';
     writeFileSync(
         join(dir, 'package.json'),
@@ -147,18 +186,40 @@ for (const host of hosts) {
             2,
         ),
     );
-    writeFileSync(join(dir, 'consumer.mts'), `import MarkdownIt from 'markdown-it';\n${typeBody}`);
+    const mixedTypeBody =
+        id === '13'
+            ? `
+const host13Plugin: (md: MarkdownIt) => void = plugin;
+const host15Plugin: (md: InstanceType<typeof MarkdownIt15>) => void = plugin;
+new MarkdownIt().use(host13Plugin);
+new MarkdownIt15().use(host15Plugin);
+`
+            : '';
+    const mixedRuntimeBody =
+        id === '13'
+            ? `
+assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: 'enabled'})).render(':::cut [Mixed]\\nBody\\n:::'), /<details/);
+`
+            : '';
+    writeFileSync(
+        join(dir, 'consumer.mts'),
+        `import MarkdownIt from 'markdown-it';\n${id === '13' ? "import MarkdownIt15 from 'markdown-it-transform15';\n" : ''}${typeBody}${mixedTypeBody}`,
+    );
     writeFileSync(
         join(dir, 'consumer.cts'),
-        `import MarkdownIt = require('markdown-it');\n${typeBody}`,
+        `import MarkdownIt = require('markdown-it');\n${id === '13' ? "import MarkdownIt15 = require('markdown-it-transform15');\n" : ''}${typeBody}${mixedTypeBody}`,
+    );
+    writeFileSync(
+        join(dir, 'reexport.cts'),
+        "import {transform} from '@diplodoc/cut-extension';\nexport = transform({bundle: false});\n",
     );
     writeFileSync(
         join(dir, 'runtime.cjs'),
-        `const assert = require('node:assert/strict');\nconst MarkdownIt = require('markdown-it');\nconst {transform} = require('@diplodoc/cut-extension');\n${runtimeBody}`,
+        `const assert = require('node:assert/strict');\nconst MarkdownIt = require('markdown-it');\n${id === '13' ? "const MarkdownIt15 = require('markdown-it-transform15');\n" : ''}const {transform} = require('@diplodoc/cut-extension');\n${runtimeBody}${mixedRuntimeBody}`,
     );
     writeFileSync(
         join(dir, 'runtime.mjs'),
-        `import assert from 'node:assert/strict';\nimport MarkdownIt from 'markdown-it';\nimport {transform} from '@diplodoc/cut-extension';\n${runtimeBody}`,
+        `import assert from 'node:assert/strict';\nimport MarkdownIt from 'markdown-it';\n${id === '13' ? "import MarkdownIt15 from 'markdown-it-transform15';\n" : ''}import {transform} from '@diplodoc/cut-extension';\n${runtimeBody}${mixedRuntimeBody}`,
     );
     npm(['install', '--no-workspaces', '--no-audit', '--no-fund'], dir, `native${id}-install`);
     npm(['ci', '--no-workspaces', '--no-audit', '--no-fund'], dir, `native${id}-ci`);
@@ -176,7 +237,13 @@ for (const host of hosts) {
         );
     }
     assert.equal(consumerRequire('markdown-it/package.json').version, host.version);
-    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '0.5.0-transform5.1');
+    if (id === '13') {
+        assert(
+            realpathSync(consumerRequire.resolve('markdown-it-transform15')).startsWith(modules),
+        );
+        assert.equal(consumerRequire('markdown-it-transform15/package.json').version, '15.0.3');
+    }
+    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '0.5.0-transform5.2');
     if (host.types)
         assert.equal(consumerRequire('@types/markdown-it/package.json').version, host.types);
     else
@@ -188,7 +255,7 @@ for (const host of hosts) {
     assert.match(directive.resolved, /^https:\/\/registry\.npmjs\.org\//);
     assert.equal(
         directive.integrity,
-        'sha512-cyVpLEx1QZjZjcLomyI66ZDDvBg/HfWOI9bkYver4cmgJllFnyMwfoK0FIQg6fUOZhy9BnAbd/hzDohKFIq/iA==',
+        'sha512-QcQ8muoELVH1dPOo4RMTFC0ca/u7HnCQ2s6dAqi8MvX3MSHT4aGryb3fCf3uAUTHTpzjPxNwxLroTwGLpLLOzw==',
     );
     const installed = join(dir, 'node_modules', '@diplodoc', 'cut-extension');
     assert(
@@ -205,6 +272,32 @@ for (const host of hosts) {
         assert.equal(hash(join(installed, file.path)), file.sha256, file.path);
     const tsc = consumerRequire.resolve('typescript/bin/tsc');
     run(process.execPath, [tsc, '-p', 'tsconfig.json'], dir, `native${id}-types`);
+    run(
+        process.execPath,
+        [
+            tsc,
+            '--ignoreConfig',
+            '--strict',
+            '--skipLibCheck',
+            'false',
+            '--module',
+            'NodeNext',
+            '--moduleResolution',
+            'NodeNext',
+            '--target',
+            'ES2022',
+            '--declaration',
+            '--emitDeclarationOnly',
+            '--outDir',
+            'declarations',
+            'reexport.cts',
+        ],
+        dir,
+        `native${id}-reexport`,
+    );
+    const reexport = readFileSync(join(dir, 'declarations/reexport.d.cts'), 'utf8');
+    assert.match(reexport, /@diplodoc\/cut-extension/);
+    assert.doesNotMatch(reexport, /@diplodoc\/cut-extension\/build\//);
     run(process.execPath, ['runtime.cjs'], dir, `native${id}-cjs`);
     run(process.execPath, ['runtime.mjs'], dir, `native${id}-esm`);
     writeFileSync(join(report, `native${id}-lock.json`), JSON.stringify(lock, null, 2));

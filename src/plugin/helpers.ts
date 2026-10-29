@@ -1,8 +1,8 @@
-import type {Token} from './markdown-it';
+import type {CutToken} from './markdown-it';
 
 const CUT_REGEXP = /^{%\s*cut\s*["|'](.*)["|']\s*%}(.*)?$/;
 
-export function matchOpenToken(tokens: Token[], i: number) {
+export function matchOpenToken(tokens: CutToken[], i: number) {
     return (
         tokens[i].type === 'paragraph_open' &&
         tokens[i + 1].type === 'inline' &&
@@ -10,7 +10,7 @@ export function matchOpenToken(tokens: Token[], i: number) {
     );
 }
 
-export function matchCloseToken(tokens: Token[], i: number) {
+export function matchCloseToken(tokens: CutToken[], i: number) {
     return (
         tokens[i].type === 'paragraph_open' &&
         tokens[i + 1].type === 'inline' &&
@@ -18,7 +18,7 @@ export function matchCloseToken(tokens: Token[], i: number) {
     );
 }
 
-export function findCloseTokenIdx(tokens: Token[], idx: number) {
+export function findCloseTokenIdx(tokens: CutToken[], idx: number) {
     let level = 0;
     let i = idx;
     while (i < tokens.length) {

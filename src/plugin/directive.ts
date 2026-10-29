@@ -1,5 +1,10 @@
-import type {PluginSimple} from './markdown-it';
-import type {ContainerDirectiveHandler, ContainerDirectiveParams} from '@diplodoc/directive';
+import type {CutCoreState, CutHost, CutToken} from './markdown-it';
+import type {
+    BlockContentState,
+    ContainerDirectiveParams,
+    DirectiveBlockState,
+    DirectiveInlineState,
+} from '@diplodoc/directive';
 import type {CutDiagnostic} from './transform';
 
 import {directiveParser, registerContainerDirective} from '@diplodoc/directive';
@@ -11,7 +16,7 @@ const allowedAttributes = new Set(['id', 'class', 'open', 'name']);
 
 function invalidReason(
     params: ContainerDirectiveParams,
-    state: Parameters<ContainerDirectiveHandler>[0],
+    state: Pick<DirectiveBlockState, 'src' | 'eMarks'>,
 ): string | undefined {
     if (params.dests) {
         // The upstream parser also infers a destination from a prior reference
@@ -49,8 +54,15 @@ function detailsAttributes({attrs}: ContainerDirectiveParams): Record<string, st
 }
 
 export const cutDirective =
-    (onDiagnostic?: (diagnostic: CutDiagnostic) => void): PluginSimple =>
-    (md) => {
+    (onDiagnostic?: (diagnostic: CutDiagnostic) => void) =>
+    <
+        T extends CutToken,
+        C extends CutCoreState<T>,
+        B extends DirectiveBlockState & BlockContentState<B>,
+        I extends DirectiveInlineState,
+    >(
+        md: CutHost<T, C, B, I>,
+    ) => {
         md.use(directiveParser());
 
         registerContainerDirective(md, {
@@ -63,7 +75,15 @@ export const cutDirective =
                     return false;
                 }
                 state.env ??= {};
-                state.env[ENV_FLAG_NAME] = true;
+                if (
+                    state.env === null ||
+                    (typeof state.env !== 'object' && typeof state.env !== 'function')
+                ) {
+                    throw new TypeError('Cut environment must be an object');
+                }
+                if (!Reflect.set(state.env, ENV_FLAG_NAME, true)) {
+                    throw new TypeError('Cannot set cut environment flag');
+                }
 
                 return true;
             },

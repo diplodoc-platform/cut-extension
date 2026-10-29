@@ -1,4 +1,5 @@
-import type {CoreRule, PluginSimple} from './markdown-it';
+import type {DirectiveBlockState, DirectiveInlineState} from '@diplodoc/directive';
+import type {CutCoreState, CutHost, CutToken} from './markdown-it';
 
 import {AttrsParser} from '@diplodoc/utils';
 
@@ -6,8 +7,15 @@ import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
 import {titleAttributes} from './attributes';
 
-export const cutPlugin: PluginSimple = (md) => {
-    const rule: CoreRule = (state) => {
+export const cutPlugin = <
+    T extends CutToken,
+    C extends CutCoreState<T>,
+    B extends DirectiveBlockState,
+    I extends DirectiveInlineState,
+>(
+    md: CutHost<T, C, B, I>,
+) => {
+    const rule = (state: C) => {
         const tokens = state.tokens;
         let i = 0;
 
@@ -36,11 +44,18 @@ export const cutPlugin: PluginSimple = (md) => {
                 newOpenToken.map = tokens[i].map;
                 newOpenToken.markup = '{%';
 
-                attrsParser.apply(newOpenToken);
+                // Utils 2.3.7-transform5.0 uses only attrJoin(name, string) here.
+                const apply = attrsParser.apply as (
+                    this: AttrsParser,
+                    target: Pick<CutToken, 'attrJoin'>,
+                ) => void;
+                apply.call(attrsParser, newOpenToken);
 
                 const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
                 const id = newOpenToken.attrGet('id');
-                for (const [name, value] of Object.entries(titleAttributes(id))) {
+                for (const [name, value] of Object.entries(
+                    titleAttributes(id ? String(id) : null),
+                )) {
                     titleOpen.attrSet(name, value);
                 }
                 if (id) newOpenToken.attrSet('id', '');

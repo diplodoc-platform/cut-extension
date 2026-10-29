@@ -13,27 +13,26 @@ entries:
     dependency: '@diplodoc/directive'
     repositories:
       - cut-extension
-    allowed-version: 0.5.0-transform5.1
+    allowed-version: 0.5.0-transform5.2
     ignored-versions: []
     risk: critical
     category: parser-migration
     verification-profile: ecosystem
     reason: >-
-      The cut directive adapter requires the published patched parser and opt-in collision guard; native parser checks
-      passed while actual downstream consumer integration remains pending.
+      The cut adapter needs finite public host/state ports for real coexisting Markdown-it 13 and 15; the exact
+      candidate passed native and mixed installed gates and two post-CI reviews, while publication and downstream
+      acceptance remain separately gated.
     evidence:
-      review: https://github.com/diplodoc-platform/directive/pull/61
-      artifact: https://registry.npmjs.org/@diplodoc/directive/-/directive-0.5.0-transform5.1.tgz
-      sha256: 408ca8e4169929cd3cb15f7ff13d4e55149e54959b702b1405b70ef83ca327da
+      review: https://github.com/diplodoc-platform/directive/pull/62
+      sha256: 0df223a5233f9b9afff72f444f147d7409a06910beb4e727f5ed7205263b9443
       task: https://st.yandex-team.ru/DOCSTOOLS-6943
     owner: diplodoc-platform/team
     introduced-at: 2026-10-29T00:00:00.000Z
     review-after: 2026-11-17T00:00:00.000Z
     expires-at: 2026-12-01T00:00:00.000Z
     exit-criteria:
-      - >-
-        Complete actual CLI and Viewer integration checks and revalidate the parser and collision behavior before
-        widening the pin
+      - Publish only with explicit approval and verify the exact registry artifact
+      - Complete actual Cut, CLI and Viewer mixed-host integration before widening the pin
   - id: DEP-0006
     dependency: '@diplodoc/utils'
     repositories:

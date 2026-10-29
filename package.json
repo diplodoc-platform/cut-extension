@@ -53,7 +53,7 @@
     "lock": "npm install --no-workspaces --package-lock-only --ignore-scripts"
   },
   "dependencies": {
-    "@diplodoc/directive": "0.5.0-transform5.1",
+    "@diplodoc/directive": "0.5.0-transform5.2",
     "@diplodoc/utils": "2.3.7-transform5.0"
   },
   "devDependencies": {
