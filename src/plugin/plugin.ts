@@ -1,13 +1,21 @@
-import type MarkdownIt from 'markdown-it';
-import type Core from 'markdown-it/lib/parser_core';
+import type {DirectiveBlockState, DirectiveInlineState} from '@diplodoc/directive';
+import type {CutCoreState, CutHost, CutToken} from './markdown-it';
 
 import {AttrsParser} from '@diplodoc/utils';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
+import {titleAttributes} from './attributes';
 
-export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
-    const rule: Core.RuleCore = (state) => {
+export const cutPlugin = <
+    T extends CutToken,
+    C extends CutCoreState<T>,
+    B extends DirectiveBlockState,
+    I extends DirectiveInlineState,
+>(
+    md: CutHost<T, C, B, I>,
+) => {
+    const rule = (state: C) => {
         const tokens = state.tokens;
         let i = 0;
 
@@ -36,18 +44,21 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                 newOpenToken.map = tokens[i].map;
                 newOpenToken.markup = '{%';
 
-                attrsParser.apply(newOpenToken);
+                // Utils 2.3.7-transform5.0 uses only attrJoin(name, string) here.
+                const apply = attrsParser.apply as (
+                    this: AttrsParser,
+                    target: Pick<CutToken, 'attrJoin'>,
+                ) => void;
+                apply.call(attrsParser, newOpenToken);
 
                 const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
-                titleOpen.attrSet('class', ClassNames.Title);
-
-                // Id should be placed on summary element.
-                // This way it will be accessible by browser focus
                 const id = newOpenToken.attrGet('id');
-                if (id) {
-                    titleOpen.attrSet('id', id);
-                    newOpenToken.attrSet('id', '');
+                for (const [name, value] of Object.entries(
+                    titleAttributes(id ? String(id) : null),
+                )) {
+                    titleOpen.attrSet(name, value);
                 }
+                if (id) newOpenToken.attrSet('id', '');
 
                 const titleInline = state.md.parseInline(title, state.env)[0];
 

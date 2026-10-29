@@ -1,6 +1,6 @@
 {
   "name": "@diplodoc/cut-extension",
-  "version": "1.1.8",
+  "version": "1.1.9-transform5.1",
   "description": "Cut extension for Diplodoc platform",
   "main": "build/plugin/index.js",
   "types": "build/plugin/index.d.ts",
@@ -38,9 +38,10 @@
   "scripts": {
     "build": "npm run build:clean && run-p build:js build:declarations",
     "build:js": "node ./esbuild/build.mjs",
-    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build",
+    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build && node scripts/fix-runtime-declarations.mjs",
     "build:clean": "rm -rf build",
     "test": "vitest run",
+    "test:package": "node scripts/test-package.mjs",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build",
     "lint": "lint",
@@ -52,8 +53,8 @@
     "lock": "npm install --no-workspaces --package-lock-only --ignore-scripts"
   },
   "dependencies": {
-    "@diplodoc/directive": "^0.4.0",
-    "@diplodoc/utils": "^2.3.6"
+    "@diplodoc/directive": "0.5.0-transform5.2",
+    "@diplodoc/utils": "2.3.7-transform5.0"
   },
   "devDependencies": {
     "@diplodoc/infra": "2.3.0",

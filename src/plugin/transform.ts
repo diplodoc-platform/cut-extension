@@ -1,4 +1,9 @@
-import type MarkdownIt from 'markdown-it';
+import type {
+    BlockContentState,
+    DirectiveBlockState,
+    DirectiveInlineState,
+} from '@diplodoc/directive';
+import type {CutCoreState, CutHost, CutToken, MarkdownIt} from './markdown-it';
 import type {RawRuntime, Runtime} from './utils';
 
 import {cutPlugin} from './plugin';
@@ -6,8 +11,12 @@ import {dynrequire, getRuntime, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 import {cutDirective} from './directive';
 
+export type CutDiagnostic = {line: number; reason: string};
+
 export type TransformOptions = {
     runtime?: RawRuntime;
+    /** Reports invalid parameters for recognized cut directives. */
+    onDiagnostic?: (diagnostic: CutDiagnostic) => void;
     bundle?: boolean;
     /**
      * Enables directive syntax of yfm-cut.
@@ -28,15 +37,24 @@ type NormalizedPluginOptions = Omit<TransformOptions, 'runtime' | 'directiveSynt
     directiveSyntax: NonNullable<TransformOptions['directiveSyntax']>;
 };
 
-const registerTransform = (
-    md: MarkdownIt,
+const registerTransform = <
+    T extends CutToken,
+    C extends CutCoreState<T>,
+    B extends DirectiveBlockState & BlockContentState<B>,
+    I extends DirectiveInlineState,
+>(
+    md: CutHost<T, C, B, I>,
     {
         runtime,
         bundle,
         onBundle,
         output,
         directiveSyntax,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'directiveSyntax' | 'onBundle'> & {
+        onDiagnostic,
+    }: Pick<
+        NormalizedPluginOptions,
+        'bundle' | 'runtime' | 'directiveSyntax' | 'onBundle' | 'onDiagnostic'
+    > & {
         output: string;
     },
 ) => {
@@ -44,10 +62,10 @@ const registerTransform = (
         md.use(cutPlugin);
     }
     if (directiveSyntax === 'enabled' || directiveSyntax === 'only') {
-        md.use(cutDirective);
+        md.use(cutDirective(onDiagnostic));
     }
     md.core.ruler.push('yfm_cut_after', ({env}) => {
-        hidden(env, 'bundled', new Set<string>());
+        const bundledEnv = hidden(env, 'bundled', new Set<string>());
 
         if (env?.[ENV_FLAG_NAME] && runtime) {
             env.meta = env.meta || {};
@@ -57,7 +75,7 @@ const registerTransform = (
             env.meta.style.push(runtime.style);
 
             if (bundle && onBundle) {
-                onBundle({runtime, output}, env.bundled);
+                onBundle({runtime, output}, bundledEnv.bundled);
             }
         }
     });
@@ -77,12 +95,15 @@ export function transform(options: Partial<TransformOptions> = {}) {
     const directiveSyntax = options.directiveSyntax || 'disabled';
     const runtime: Runtime = getRuntime(options.runtime);
 
-    const plugin: MarkdownIt.PluginWithOptions<{output?: string}> = function (
-        md: MarkdownIt,
-        {output = '.'} = {},
-    ) {
+    const plugin = function <
+        T extends CutToken,
+        C extends CutCoreState<T>,
+        B extends DirectiveBlockState & BlockContentState<B>,
+        I extends DirectiveInlineState,
+    >(md: CutHost<T, C, B, I>, {output = '.'} = {}) {
         registerTransform(md, {
             directiveSyntax,
+            onDiagnostic: options.onDiagnostic,
             runtime,
             bundle,
             onBundle: options.onBundle,
@@ -90,12 +111,13 @@ export function transform(options: Partial<TransformOptions> = {}) {
         });
     };
 
-    Object.assign(plugin, {
+    return Object.assign(plugin, {
         collect(input: string, {destRoot = '.'}: InputOptions) {
             const MdIt = dynrequire('markdown-it');
             const md = new MdIt().use((md: MarkdownIt) => {
                 registerTransform(md, {
                     directiveSyntax,
+                    onDiagnostic: options.onDiagnostic,
                     runtime,
                     bundle,
                     onBundle: options.onBundle,
@@ -106,6 +128,4 @@ export function transform(options: Partial<TransformOptions> = {}) {
             md.parse(input, {});
         },
     });
-
-    return plugin;
 }
