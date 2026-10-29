@@ -1,4 +1,4 @@
-import type MarkdownIt from 'markdown-it';
+import type {MarkdownIt} from './markdown-it';
 import type {RawRuntime, Runtime} from './utils';
 
 import {cutPlugin} from './plugin';
@@ -85,7 +85,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
     const directiveSyntax = options.directiveSyntax || 'disabled';
     const runtime: Runtime = getRuntime(options.runtime);
 
-    const plugin: MarkdownIt.PluginWithOptions<{output?: string}> = function (
+    const plugin: (md: MarkdownIt, options?: {output?: string}) => void = function (
         md: MarkdownIt,
         {output = '.'} = {},
     ) {

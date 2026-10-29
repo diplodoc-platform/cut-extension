@@ -38,7 +38,7 @@
   "scripts": {
     "build": "npm run build:clean && run-p build:js build:declarations",
     "build:js": "node ./esbuild/build.mjs",
-    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build",
+    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build && node scripts/fix-runtime-declarations.mjs",
     "build:clean": "rm -rf build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

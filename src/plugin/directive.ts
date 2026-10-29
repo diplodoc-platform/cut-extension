@@ -1,4 +1,4 @@
-import type MarkdownIt from 'markdown-it';
+import type {PluginSimple} from './markdown-it';
 import type {ContainerDirectiveHandler, ContainerDirectiveParams} from '@diplodoc/directive';
 import type {CutDiagnostic} from './transform';
 
@@ -49,7 +49,7 @@ function detailsAttributes({attrs}: ContainerDirectiveParams): Record<string, st
 }
 
 export const cutDirective =
-    (onDiagnostic?: (diagnostic: CutDiagnostic) => void): MarkdownIt.PluginSimple =>
+    (onDiagnostic?: (diagnostic: CutDiagnostic) => void): PluginSimple =>
     (md) => {
         md.use(directiveParser());
 

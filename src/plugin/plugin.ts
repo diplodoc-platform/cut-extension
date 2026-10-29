@@ -1,5 +1,4 @@
-import type MarkdownIt from 'markdown-it';
-import type Core from 'markdown-it/lib/parser_core';
+import type {CoreRule, PluginSimple} from './markdown-it';
 
 import {AttrsParser} from '@diplodoc/utils';
 
@@ -7,8 +6,8 @@ import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
 import {titleAttributes} from './attributes';
 
-export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
-    const rule: Core.RuleCore = (state) => {
+export const cutPlugin: PluginSimple = (md) => {
+    const rule: CoreRule = (state) => {
         const tokens = state.tokens;
         let i = 0;
 
