@@ -5,6 +5,7 @@ import {AttrsParser} from '@diplodoc/utils';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
 import {findCloseTokenIdx, matchOpenToken} from './helpers';
+import {titleAttributes} from './attributes';
 
 export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
     const rule: Core.RuleCore = (state) => {
@@ -39,15 +40,11 @@ export const cutPlugin: MarkdownIt.PluginSimple = (md) => {
                 attrsParser.apply(newOpenToken);
 
                 const titleOpen = new state.Token(TokenType.TitleOpen, 'summary', 1);
-                titleOpen.attrSet('class', ClassNames.Title);
-
-                // Id should be placed on summary element.
-                // This way it will be accessible by browser focus
                 const id = newOpenToken.attrGet('id');
-                if (id) {
-                    titleOpen.attrSet('id', id);
-                    newOpenToken.attrSet('id', '');
+                for (const [name, value] of Object.entries(titleAttributes(id))) {
+                    titleOpen.attrSet(name, value);
                 }
+                if (id) newOpenToken.attrSet('id', '');
 
                 const titleInline = state.md.parseInline(title, state.env)[0];
 

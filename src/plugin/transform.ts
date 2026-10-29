@@ -6,8 +6,12 @@ import {dynrequire, getRuntime, hidden} from './utils';
 import {ENV_FLAG_NAME} from './const';
 import {cutDirective} from './directive';
 
+export type CutDiagnostic = {line: number; reason: string};
+
 export type TransformOptions = {
     runtime?: RawRuntime;
+    /** Reports invalid parameters for recognized cut directives. */
+    onDiagnostic?: (diagnostic: CutDiagnostic) => void;
     bundle?: boolean;
     /**
      * Enables directive syntax of yfm-cut.
@@ -36,7 +40,11 @@ const registerTransform = (
         onBundle,
         output,
         directiveSyntax,
-    }: Pick<NormalizedPluginOptions, 'bundle' | 'runtime' | 'directiveSyntax' | 'onBundle'> & {
+        onDiagnostic,
+    }: Pick<
+        NormalizedPluginOptions,
+        'bundle' | 'runtime' | 'directiveSyntax' | 'onBundle' | 'onDiagnostic'
+    > & {
         output: string;
     },
 ) => {
@@ -44,7 +52,7 @@ const registerTransform = (
         md.use(cutPlugin);
     }
     if (directiveSyntax === 'enabled' || directiveSyntax === 'only') {
-        md.use(cutDirective);
+        md.use(cutDirective(onDiagnostic));
     }
     md.core.ruler.push('yfm_cut_after', ({env}) => {
         hidden(env, 'bundled', new Set<string>());
@@ -83,6 +91,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
     ) {
         registerTransform(md, {
             directiveSyntax,
+            onDiagnostic: options.onDiagnostic,
             runtime,
             bundle,
             onBundle: options.onBundle,
@@ -96,6 +105,7 @@ export function transform(options: Partial<TransformOptions> = {}) {
             const md = new MdIt().use((md: MarkdownIt) => {
                 registerTransform(md, {
                     directiveSyntax,
+                    onDiagnostic: options.onDiagnostic,
                     runtime,
                     bundle,
                     onBundle: options.onBundle,
