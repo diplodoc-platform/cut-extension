@@ -92,6 +92,40 @@ const invalidMode: TransformOptions = {directiveSyntax: 'invalid'};
 void invalidMode;
 `;
 const runtimeBody = `
+{
+const newline = String.fromCharCode(10);
+const nbsp = String.fromCharCode(0xa0);
+const title = '*Title' + nbsp + 'with spaces*';
+const body = nbsp + 'Body **text**.' + nbsp;
+const opening = '{% cut "' + title + '" %}{#anchor .extra}';
+const closing = '{% endcut %}';
+const reference = [opening, '', body, '', closing].join(newline);
+for (const directiveSyntax of ['disabled', 'enabled']) {
+    const render = (source) => new MarkdownIt({html: true}).use(transform({bundle: false, directiveSyntax})).render(source);
+    const expected = render(reference);
+    assert.match(expected, /<details/);
+    assert.match(expected, /<strong>text<\\/strong>/);
+    for (const point of [0x20, 0x09, 0xa0, 0x1680, 0x2003, 0x202f, 0x205f, 0x3000, 0xfeff]) {
+        const space = String.fromCharCode(point);
+        const leading = point === 0x09 ? '' : space; // A leading tab belongs to native indented code.
+        const padded = [leading + opening + space, space, '', body, '', leading + closing + space, space].join(newline);
+        assert.equal(render(padded), expected, 'Standalone Cut padding U+' + point.toString(16));
+    }
+    const realParagraph = [opening, nbsp + 'Real body', '', closing].join(newline);
+    assert.doesNotMatch(render(realParagraph), /<details/);
+    assert.match(render(realParagraph), /Real body/);
+    assert.doesNotMatch(render(['{% cut "Unclosed %}', '', body, '', closing].join(newline)), /<details/);
+    assert.doesNotMatch(render([opening, '', body].join(newline)), /<details/);
+    const nested = [opening, nbsp, '', '{% cut "Inner" %}', nbsp, '', body, '', closing, nbsp, '', closing].join(newline);
+    assert.equal((render(nested).match(/<details/g) || []).length, 2);
+}
+const mixedSource = [':::cut [Colon]', '', opening, nbsp, '', body, '', closing, '', ':::'].join(newline);
+const mixedHtml = new MarkdownIt().use(transform({bundle: false, directiveSyntax: 'enabled'})).render(mixedSource);
+assert.equal((mixedHtml.match(/<details/g) || []).length, 2);
+const only = new MarkdownIt().use(transform({bundle: false, directiveSyntax: 'only'})).render(reference);
+assert.doesNotMatch(only, /<details/);
+}
+
 const bundles = [];
 const collector = transform({directiveSyntax: 'enabled', onBundle: (args) => bundles.push(args)});
 const descriptor = Object.getOwnPropertyDescriptor(collector, 'collect');

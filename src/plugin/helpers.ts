@@ -20,7 +20,8 @@ export function matchOpenToken(tokens: readonly CutBoundaryToken[], i: number) {
     return (
         tokens[i].type === 'paragraph_open' &&
         tokens[i + 1].type === 'inline' &&
-        tokens[i + 1].content.match(CUT_REGEXP)
+        // Native parsers differ in whether they retain paragraph-edge Unicode whitespace.
+        tokens[i + 1].content.trim().match(CUT_REGEXP)
     );
 }
 
