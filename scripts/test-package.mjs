@@ -203,6 +203,7 @@ for (const host of hosts) {
     const dependencies = {
         '@diplodoc/cut-extension': `file:${tarball}`,
         'markdown-it': host.version,
+        'markdown-it-attrs': '4.3.1',
         typescript: sourceRequire('typescript/package.json').version,
     };
     if (host.types) dependencies['@types/markdown-it'] = host.types;
@@ -374,6 +375,12 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
     assert.match(reexport, /@diplodoc\/cut-extension/);
     assert.doesNotMatch(reexport, /@diplodoc\/cut-extension\/build\//);
     run(process.execPath, ['runtime.cjs'], dir, `native${id}-cjs`);
+    const checkEmptyCutAttrs = sourceRequire('./scripts/test-package-empty-attrs.cjs');
+    checkEmptyCutAttrs(
+        consumerRequire('markdown-it'),
+        consumerRequire('markdown-it-attrs'),
+        consumerRequire('@diplodoc/cut-extension').transform,
+    );
     run(process.execPath, ['runtime.mjs'], dir, `native${id}-esm`);
     writeFileSync(join(report, `native${id}-lock.json`), JSON.stringify(lock, null, 2));
     writeFileSync(

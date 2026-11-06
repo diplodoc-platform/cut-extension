@@ -4,7 +4,8 @@ import type {CutCoreState, CutHost, CutToken} from './markdown-it';
 import {AttrsParser} from '@diplodoc/utils';
 
 import {ClassNames, ENV_FLAG_NAME, TokenType} from './const';
-import {findCloseTokenIdx, matchOpenToken} from './helpers';
+import {normalizeEmptyCutEdges} from './helpers';
+import {legacyPairs} from './legacy-pairs';
 import {titleAttributes} from './attributes';
 
 export const cutPlugin = <
@@ -17,19 +18,18 @@ export const cutPlugin = <
 ) => {
     const rule = (state: C) => {
         const tokens = state.tokens;
+        const openings = legacyPairs(tokens);
+        if (!openings) return;
+
+        const closingEdges = new Map<number, [T, T]>();
+        const result: T[] = [];
         let i = 0;
 
         while (i < tokens.length) {
-            const match = matchOpenToken(tokens, i);
-
-            if (match) {
-                const closeTokenIdx = findCloseTokenIdx(tokens, i + 4);
-
-                if (!closeTokenIdx) {
-                    i += 3;
-                    continue;
-                }
-
+            const opening = openings.get(i);
+            const closeTokenIdx = opening?.close;
+            if (opening && closeTokenIdx !== undefined) {
+                const match = opening.match;
                 const title = match[1];
                 const attrs = match[2] || '';
 
@@ -79,26 +79,29 @@ export const cutPlugin = <
                 const newCloseToken = new state.Token(TokenType.CutClose, 'details', -1);
                 newCloseToken.map = tokens[closeTokenIdx].map;
 
-                const insideTokens = [
-                    newOpenToken,
-                    titleOpen,
-                    titleInline,
-                    titleClose,
-                    contentOpen,
-                    ...tokens.slice(i + 3, closeTokenIdx),
-                    contentClose,
-                    newCloseToken,
-                ];
-
-                tokens.splice(i, closeTokenIdx - i + 3, ...insideTokens);
+                result.push(newOpenToken, titleOpen, titleInline, titleClose, contentOpen);
+                closingEdges.set(closeTokenIdx, [contentClose, newCloseToken]);
 
                 state.env ??= {};
                 state.env[ENV_FLAG_NAME] = true;
 
-                i++;
+                i += 3;
             } else {
-                i++;
+                const closing = closingEdges.get(i);
+                if (closing) {
+                    result.push(closing[0], closing[1]);
+                    i += 3;
+                    continue;
+                }
+                if (opening && !closingEdges.has(i + 3)) {
+                    normalizeEmptyCutEdges(tokens, i, opening.match[2] || '');
+                }
+                result.push(tokens[i++]);
             }
+        }
+        if (closingEdges.size) {
+            tokens.length = 0;
+            for (const token of result) tokens.push(token);
         }
     };
 
