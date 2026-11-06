@@ -20,6 +20,7 @@ export type PluginSimple = (md: MarkdownIt) => void;
 export type CutToken = {
     type: string;
     content: string;
+    children?: {type: string; content: string}[] | null;
     markup: string;
     map: [number, number] | null;
     attrSet(name: string, value: string): void;
