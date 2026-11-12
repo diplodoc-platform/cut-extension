@@ -319,7 +319,7 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         );
         assert.equal(consumerRequire('markdown-it-transform15/package.json').version, '15.0.3');
     }
-    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '1.0.0-beta.1');
+    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '1.0.0-beta.2');
     if (host.types)
         assert.equal(consumerRequire('@types/markdown-it/package.json').version, host.types);
     else
