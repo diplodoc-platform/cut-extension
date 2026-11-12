@@ -319,7 +319,7 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         );
         assert.equal(consumerRequire('markdown-it-transform15/package.json').version, '15.0.3');
     }
-    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '0.5.0-transform5.2');
+    assert.equal(consumerRequire('@diplodoc/directive/package.json').version, '1.0.0-beta.1');
     if (host.types)
         assert.equal(consumerRequire('@types/markdown-it/package.json').version, host.types);
     else
@@ -331,7 +331,7 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
     assert.match(directive.resolved, /^https:\/\/registry\.npmjs\.org\//);
     assert.equal(
         directive.integrity,
-        'sha512-QcQ8muoELVH1dPOo4RMTFC0ca/u7HnCQ2s6dAqi8MvX3MSHT4aGryb3fCf3uAUTHTpzjPxNwxLroTwGLpLLOzw==',
+        sourceRequire('./package-lock.json').packages['node_modules/@diplodoc/directive'].integrity,
     );
     const installed = join(dir, 'node_modules', '@diplodoc', 'cut-extension');
     assert(
