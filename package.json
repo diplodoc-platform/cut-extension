@@ -10,6 +10,10 @@
       "node": "./build/plugin/index-node.js",
       "default": "./build/plugin/index.js"
     },
+    "./plugin": {
+      "types": "./build/plugin/index.d.ts",
+      "default": "./build/plugin/index.js"
+    },
     "./runtime": {
       "types": "./build/runtime/index.d.ts",
       "style": "./build/runtime/index.css",
@@ -38,7 +42,7 @@
   "scripts": {
     "build": "npm run build:clean && run-p build:js build:declarations",
     "build:js": "node ./esbuild/build.mjs",
-    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build",
+    "build:declarations": "tsc --project tsconfig.publish.json --emitDeclarationOnly --outDir ./build && node scripts/fix-runtime-declarations.mjs",
     "build:clean": "rm -rf build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -52,8 +56,8 @@
     "lock": "npm install --no-workspaces --package-lock-only --ignore-scripts"
   },
   "dependencies": {
-    "@diplodoc/directive": "^0.4.0",
-    "@diplodoc/utils": "^2.3.6"
+    "@diplodoc/directive": "1.0.0-beta.2",
+    "@diplodoc/utils": "3.0.0-beta.2"
   },
   "devDependencies": {
     "@diplodoc/infra": "2.3.0",
