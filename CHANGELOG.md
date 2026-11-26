@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.8...v2.0.0) (2026-11-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cut:** Cut uses the next major releases of Directive and Utils and TypeScript 5.3 or newer for public parser declarations.
+
+### Features
+
+* **cut:** support the Transform 5 parser graph ([3605546](https://github.com/diplodoc-platform/cut-extension/commit/360554628e0ca93e5255841806ad1481bd436ffa))
+
+
+### Bug Fixes
+
+* **cut:** require the native Markdown-it 15 host ([56dafb8](https://github.com/diplodoc-platform/cut-extension/commit/56dafb850c87fe1723172c6475215a2b7d23d869))
+
 ## [1.1.8](https://github.com/diplodoc-platform/cut-extension/compare/v1.1.7...v1.1.8) (2026-10-28)
 
 
