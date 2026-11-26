@@ -25,8 +25,10 @@ Extension for the Diplodoc platform that enables collapsible sections (cuts) in 
 
 ## Installation
 
+Cut 2 uses the native Markdown-it 15 types and requires Markdown-it 15.0.3 or newer within major 15.
+
 ```bash
-npm install @diplodoc/cut-extension
+npm install @diplodoc/cut-extension markdown-it@^15.0.3
 ```
 
 ## Usage

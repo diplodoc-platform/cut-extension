@@ -23,12 +23,10 @@ assert(npmCli, 'Run this check through npm run test:package.');
 const tmp = mkdtempSync(join(tmpdir(), 'cut-package-'));
 const report = resolve(process.env.CUT_PACKAGE_REPORT_DIR || tmp);
 const sourceLock = sourceRequire('./package-lock.json');
-const hosts = [
-    {version: '12.3.2', types: '12.2.3'},
-    {version: '13.0.2', types: '13.0.9'},
-    {version: '14.1.0', types: '14.1.0'},
-    {version: '15.0.3'},
-];
+const directivePath = 'node_modules/@diplodoc/directive';
+const utilsPath = 'node_modules/@diplodoc/utils';
+const expectedDirective = sourceLock.packages[directivePath];
+const expectedUtils = sourceLock.packages[utilsPath];
 const hash = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
 const run = (command, args, cwd, label) => {
     const result = spawnSync(command, args, {cwd, encoding: 'utf8'});
@@ -197,20 +195,18 @@ assert.doesNotMatch(only.render('{% cut "Title" %}\\n\\nBody\\n\\n{% endcut %}')
 assert.match(only.render(':::cut [Title] {open=false}\\nBody\\n:::'), /<details class="yfm-cut">/);
 `;
 
-for (const host of hosts) {
-    const id = host.version.split('.')[0];
+function verifyInstalledCut(hostVersion) {
+    const id = hostVersion.split('.')[0];
     const dir = join(tmp, `native${id}`);
     mkdirSync(dir);
     const dependencies = {
         '@diplodoc/cut-extension': `file:${tarball}`,
-        'markdown-it': host.version,
+        '@diplodoc/directive': expectedDirective.version,
+        '@diplodoc/utils': expectedUtils.version,
+        'markdown-it': hostVersion,
         'markdown-it-attrs': '4.3.1',
         typescript: sourceRequire('typescript/package.json').version,
     };
-    if (host.types) dependencies['@types/markdown-it'] = host.types;
-    if (id === '12') dependencies['@types/linkify-it'] = '3.0.5';
-    if (id === '13') dependencies['markdown-it-transform15'] = 'npm:markdown-it@15.0.3';
-    if (id === '14') dependencies.mdurl = '2.0.0';
     writeFileSync(
         join(dir, 'package.json'),
         JSON.stringify(
@@ -241,28 +237,10 @@ for (const host of hosts) {
             2,
         ),
     );
-    const mixedTypeBody =
-        id === '13'
-            ? `
-const host13Plugin: (md: MarkdownIt) => void = plugin;
-const host15Plugin: (md: InstanceType<typeof MarkdownIt15>) => void = plugin;
-new MarkdownIt().use(host13Plugin);
-new MarkdownIt15().use(host15Plugin);
-`
-            : '';
-    const mixedRuntimeBody =
-        id === '13'
-            ? `
-assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: 'enabled'})).render(':::cut [Mixed]\\nBody\\n:::'), /<details/);
-`
-            : '';
-    writeFileSync(
-        join(dir, 'consumer.mts'),
-        `import MarkdownIt from 'markdown-it';\n${id === '13' ? "import MarkdownIt15 from 'markdown-it-transform15';\n" : ''}${typeBody}${mixedTypeBody}`,
-    );
+    writeFileSync(join(dir, 'consumer.mts'), `import MarkdownIt from 'markdown-it';\n${typeBody}`);
     writeFileSync(
         join(dir, 'consumer.cts'),
-        `import MarkdownIt = require('markdown-it');\n${id === '13' ? "import MarkdownIt15 = require('markdown-it-transform15');\n" : ''}${typeBody}${mixedTypeBody}`,
+        `import MarkdownIt = require('markdown-it');\n${typeBody}`,
     );
     writeFileSync(
         join(dir, 'reexport.cts'),
@@ -270,14 +248,22 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
     );
     writeFileSync(
         join(dir, 'runtime.cjs'),
-        `const assert = require('node:assert/strict');\nconst MarkdownIt = require('markdown-it');\n${id === '13' ? "const MarkdownIt15 = require('markdown-it-transform15');\n" : ''}const {transform} = require('@diplodoc/cut-extension');\n${runtimeBody}${mixedRuntimeBody}`,
+        `const assert = require('node:assert/strict');\nconst MarkdownIt = require('markdown-it');\nconst {transform} = require('@diplodoc/cut-extension');\n${runtimeBody}`,
     );
     writeFileSync(
         join(dir, 'runtime.mjs'),
-        `import assert from 'node:assert/strict';\nimport MarkdownIt from 'markdown-it';\n${id === '13' ? "import MarkdownIt15 from 'markdown-it-transform15';\n" : ''}import {transform} from '@diplodoc/cut-extension';\n${runtimeBody}${mixedRuntimeBody}`,
+        `import assert from 'node:assert/strict';\nimport MarkdownIt from 'markdown-it';\n${id === '13' ? "import MarkdownIt15 from 'markdown-it-transform15';\n" : ''}import {transform} from '@diplodoc/cut-extension';\n${runtimeBody}`,
     );
-    npm(['install', '--no-workspaces', '--no-audit', '--no-fund'], dir, `native${id}-install`);
-    npm(['ci', '--no-workspaces', '--no-audit', '--no-fund'], dir, `native${id}-ci`);
+    npm(
+        ['install', '--strict-peer-deps', '--no-workspaces', '--no-audit', '--no-fund'],
+        dir,
+        `native${id}-install`,
+    );
+    npm(
+        ['ci', '--strict-peer-deps', '--no-workspaces', '--no-audit', '--no-fund'],
+        dir,
+        `native${id}-ci`,
+    );
     const consumerRequire = createRequire(join(dir, 'package.json'));
     const modules = realpathSync(join(dir, 'node_modules')) + sep;
     for (const name of [
@@ -291,7 +277,7 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
             `${name} escaped fixture`,
         );
     }
-    assert.equal(consumerRequire('markdown-it/package.json').version, host.version);
+    assert.equal(consumerRequire('markdown-it/package.json').version, hostVersion);
     const pure = buildSync({
         stdin: {
             contents:
@@ -314,28 +300,19 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         'The explicit pure entry must exclude filesystem wrappers',
     );
     writeFileSync(join(report, `native${id}-pure-graph.json`), JSON.stringify(pure.metafile));
-    if (id === '13') {
-        assert(
-            realpathSync(consumerRequire.resolve('markdown-it-transform15')).startsWith(modules),
-        );
-        assert.equal(consumerRequire('markdown-it-transform15/package.json').version, '15.0.3');
-    }
-    if (host.types)
-        assert.equal(consumerRequire('@types/markdown-it/package.json').version, host.types);
-    else
-        assert.throws(() => consumerRequire.resolve('@types/markdown-it/package.json'), {
-            code: 'MODULE_NOT_FOUND',
-        });
+    assert.throws(() => consumerRequire.resolve('@types/markdown-it/package.json'), {
+        code: 'MODULE_NOT_FOUND',
+    });
     const lock = JSON.parse(readFileSync(join(dir, 'package-lock.json'), 'utf8'));
-    const directivePath = 'node_modules/@diplodoc/directive';
     const directive = lock.packages[directivePath];
-    const expectedDirective = sourceLock.packages[directivePath];
     assert.equal(
         consumerRequire('@diplodoc/directive/package.json').version,
         expectedDirective.version,
     );
     assert.match(directive.resolved, /^https:\/\/registry\.npmjs\.org\//);
     assert.equal(directive.integrity, expectedDirective.integrity);
+    assert.equal(lock.packages[utilsPath].version, expectedUtils.version);
+    assert.equal(lock.packages[utilsPath].integrity, expectedUtils.integrity);
     const installed = join(dir, 'node_modules', '@diplodoc', 'cut-extension');
     assert(
         realpathSync(consumerRequire.resolve('@diplodoc/cut-extension')).startsWith(
@@ -390,7 +367,7 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         join(report, `native${id}-proof.json`),
         JSON.stringify(
             {
-                host: host.version,
+                host: hostVersion,
                 tarSha256,
                 directive,
                 installed: relative(dir, installed),
@@ -401,6 +378,8 @@ assert.match(new MarkdownIt15().use(transform({bundle: false, directiveSyntax: '
         ),
     );
     process.stdout.write(
-        `Native Markdown-it ${host.version}: installed files, CJS/ESM runtime and all declarations passed\n`,
+        `Native Markdown-it ${hostVersion}: installed files, CJS/ESM runtime and all declarations passed\n`,
     );
 }
+
+verifyInstalledCut(sourceLock.packages['node_modules/markdown-it'].version);
