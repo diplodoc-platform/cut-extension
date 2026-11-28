@@ -34,6 +34,13 @@ describe('Cut extension - plugin', () => {
                 `),
             ).toMatchSnapshot();
         });
+        
+        it('should leave an empty cut unrendered', () => {
+            const result = html('{% cut "Test cut" %}\n\n{% endcut %}');
+            expect(result).not.toContain('<details');
+            expect(result).toContain('{% cut');
+            expect(result).toContain('{% endcut');
+        });
 
         it('should render simple cut with code in it', () => {
             expect(
