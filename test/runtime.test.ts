@@ -150,3 +150,52 @@ describe('YfmCutController - focus on tab return', () => {
         expect(details.open).toBe(true);
     });
 });
+
+describe('links to content inside a cut', () => {
+    let dispose: (() => void) | undefined;
+
+         afterEach(() => {
+             dispose?.();
+             dispose = undefined;
+             document.body.innerHTML = '';
+             window.location.hash = '';
+         });
+
+         function buildCutWithAnchor() {
+             const {details} = buildCollapsedCut();
+            const anchor = document.createElement('h2');
+             anchor.id = 'inner-anchor';
+            anchor.textContent = 'Inside';
+             details.querySelector('.yfm-cut-content')?.appendChild(anchor);
+             return details;
+         }
+
+         it('opens the cut on load when the hash targets content inside it', () => {
+             const details = buildCutWithAnchor();
+             window.location.hash = '#inner-anchor';
+             dispose = new YfmCutController().dispose;
+
+             expect(details.open).toBe(true);
+         });
+
+    it('opens the cut when the hash changes to content inside it', () => {
+        const details = buildCutWithAnchor();
+        dispose = new YfmCutController().dispose;
+        window.location.hash = '#inner-anchor';
+        window.dispatchEvent(new Event('hashchange'));
+
+        expect(details.open).toBe(true);
+    });
+
+    it('does not open the cut when the hash targets content outside it', () => {
+        const details = buildCollapsedCut().details;
+        const outside = document.createElement('p');
+        outside.id = 'outside';        
+
+               document.body.appendChild(outside);
+        window.location.hash = '#outside';
+                dispose = new YfmCutController().dispose;
+
+       expect(details.open).toBe(false);
+    });
+});
