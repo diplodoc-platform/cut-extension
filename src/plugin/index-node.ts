@@ -18,16 +18,17 @@ function copyRuntime({runtime, output}: {runtime: Runtime; output: string}, cach
     }
 
     const PATH_TO_RUNTIME = '../runtime';
-    const {join, resolve} = require('node:path');
+        const {join} = require('node:path');
+        const {fileURLToPath} = require('node:url');
     const runtimeFiles = {
         'index.js': runtime.script,
         'index.css': runtime.style,
     };
     for (const [originFile, outputFile] of Object.entries(runtimeFiles)) {
-        const file = join(PATH_TO_RUNTIME, originFile);
+                const file = `${PATH_TO_RUNTIME}/${originFile}`;
         if (!cache.has(file)) {
             cache.add(file);
-            copy(resolve(__dirname, file), join(output, outputFile));
+                        copy(fileURLToPath(new URL(file, import.meta.url)), join(output, outputFile));
         }
     }
 }
