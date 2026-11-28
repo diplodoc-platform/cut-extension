@@ -42,12 +42,18 @@ export class YfmCutController {
         document.addEventListener('mousedown', keepMouse);
         document.addEventListener('mouseup', amendMouse);
         document.addEventListener('focus', onFocus, true);
+        const onHashChange = () => {
+            this.expandCutForHash();
+        };
+        window.addEventListener('hashchange', onHashChange);
+        this.expandCutForHash();
 
         return () => {
             window.removeEventListener('blur', onWindowBlur);
             document.removeEventListener('mousedown', keepMouse);
             document.removeEventListener('mouseup', amendMouse);
             document.removeEventListener('focus', onFocus, true);
+            window.removeEventListener('hashchange', onHashChange);
         };
     }
 
@@ -78,6 +84,35 @@ export class YfmCutController {
         setTimeout(() => {
             cutNode.classList.remove(ClassNames.Highlight);
         }, 1000);
+    }
+
+    private expandCutForHash() {
+        const hash = window.location.hash;
+        if (!hash || hash.length < 2) {
+            return;
+        }
+        let target: HTMLElement | null = null;
+        try {
+            target = document.getElementById(decodeURIComponent(hash.slice(1)));
+        } catch {
+            return;
+        }
+
+        if (!target) {
+            return;
+        }
+        let node: HTMLElement | null = target;
+        while (node) {
+            if (isDetails(node)) {
+                node.open = true;
+            }
+            node = node.parentElement;
+        }
+        try {
+            target.scrollIntoView();
+        } catch {
+            // Scrolling is best-effort; the cut is already open.
+        }
     }
 }
 
