@@ -151,7 +151,6 @@ describe('YfmCutController - focus on tab return', () => {
     });
 });
 
-
 describe('links to content inside a cut', () => {
     let dispose: (() => void) | undefined;
 
@@ -164,15 +163,12 @@ describe('links to content inside a cut', () => {
 
          function buildCutWithAnchor() {
              const {details} = buildCollapsedCut();
-
             const anchor = document.createElement('h2');
              anchor.id = 'inner-anchor';
-
-                anchor.textContent = 'Inside';
+            anchor.textContent = 'Inside';
              details.querySelector('.yfm-cut-content')?.appendChild(anchor);
              return details;
          }
-
 
          it('opens the cut on load when the hash targets content inside it', () => {
              const details = buildCutWithAnchor();
